@@ -1,0 +1,17 @@
+{
+  "name": "vendor_name/kinozone",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "vbalachnin",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^7.0",
+    "ext-json": "*",
+    "ext-mysqli": "*"
+  }
+}
