@@ -1,3 +1,31 @@
+<?php
+include("config.php");
+include("switcher.php");
+$film_info=array();
+if(isset($_POST['searchvalue'])) {
+	$sql="SELECT kinopoiskId FROM films where nameRu LIKE '%".Switcher::toCyrillic($_POST["searchvalue"])."%' OR nameOriginal LIKE '%".Switcher::fromCyrillic($_POST["searchvalue"])."%' limit 1";
+	$result=mysqli_query($conn,$sql);
+	if($result) {
+	  while ($row = mysqli_fetch_row($result)) {
+		  array_push($film_info,$row);
+	  }
+	  mysqli_free_result($result);
+	}
+	$new_uri = $_SERVER["REQUEST_URI"]."?filmId=".$film_info[0][0];
+	header('Location: '.$new_uri);
+}
+if(isset($_GET['filmId'])){
+	$sql="SELECT * FROM films where kinopoiskId=".$_GET["filmId"];
+	$result=mysqli_query($conn,$sql);
+	if($result) {
+		while ($row = mysqli_fetch_row($result)) {
+		  array_push($film_info,$row);
+		}
+		mysqli_free_result($result);
+	}
+}
+mysqli_close($conn);
+?>
 <!DOCTYPE html>
 <html lang="ru">
    <head>
@@ -28,11 +56,11 @@
          </button> &nbsp;&nbsp;
          <a class="navbar-brand mr-1" href="index.html"><img class="img-fluid" width="25%" height="20%" alt="kinozone.co" src="img/logo.png"></a>
          <!-- Navbar Search -->
-         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 osahan-navbar-search">
+         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 osahan-navbar-search" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
             <div class="input-group">
-               <input type="text" class="form-control" placeholder="Поиск по названию фильма или сериала...">
+               <input type="text" class="form-control" name="searchvalue" placeholder="Поиск по названию фильма или сериала...">
                <div class="input-group-append">
-                  <button class="btn btn-light" type="button">
+                  <button class="btn btn-light" type="submit">
                   <i class="fas fa-search"></i> 
                   </button>
                </div>
@@ -208,10 +236,10 @@
                               </script>
                            </div>
                            <div class="single-video-title box mb-3">
-                              <h2><a href="#">Contrary to popular belief, Lorem Ipsum (2019) is not.</a></h2>
-                              <p class="mb-0"><i class="fas fa-eye"></i> 2,729,347 views</p>
+                              <h2><a href="#"><?php echo $film_info[0][3]; ?></a></h2>
+                              <p class="mb-0"><i class="fas fa-star"></i> Рейтинг: <?php echo $film_info[0][11]; ?></p>
                            </div>
-                           <div class="single-video-author box mb-3">
+                           <div class="single-video-author box mb-3" style="display:none;">
                               <div class="float-right"><button class="btn btn-danger" type="button">Subscribe <strong>1.4M</strong></button> <button class="btn btn btn-outline-danger" type="button"><i class="fas fa-bell"></i></button></div>
                               <img class="img-fluid" src="img/s4.png" alt="">
                               <p><a href="#"><strong>Osahan Channel</strong></a> <span title="" data-placement="top" data-toggle="tooltip" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span></p>
@@ -222,8 +250,8 @@
                               <p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
                               <h6>Category :</h6>
                               <p>Gaming , PS4 Exclusive , Gameplay , 1080p</p>
-                              <h6>About :</h6>
-                              <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved overVarious versions have evolved over the years, sometimes </p>
+                              <h6>О картине:</h6>
+                              <p><?php echo $film_info[0][25]; ?></p>
                               <h6>Tags :</h6>
                               <p class="tags mb-0">
                                  <span><a href="#">Uncharted 4</a></span>
