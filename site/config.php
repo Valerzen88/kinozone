@@ -24,9 +24,3 @@ if (!$res) {
   die("Connection failed: " . mysqli_connect_error());
 }
 
-function mysqli_result($result, $row, $field=0) {
-    $res->data_seek($row);
-    $datarow = $res->fetch_array();
-    return $datarow[$field];
-	}
-?>
