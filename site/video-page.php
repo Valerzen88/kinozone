@@ -37,7 +37,14 @@ mysqli_close($conn);
       <meta name="author" content="KINOZONE.CO">
       <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>
       <!-- Favicon Icon -->
-      <link rel="icon" type="image/png" href="img/favicon.png">
+      <!-- Für Apple-Geräte -->
+	  <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon-180x180.png">
+	  <!-- Für Browser -->
+	  <link rel="shortcut icon" type="image/x-icon" href="img/favicon/favicon-32x32.ico">
+	  <link rel="icon" type="image/png" sizes="96x96" href="img/favicon/favicon-96x96.png">
+	  <!-- Für Windows Metro -->
+	  <meta name="msapplication-square310x310logo" content="img/favicon/mstile-310x310.png">
+	  <meta name="msapplication-TileColor" content="#ffffff">
       <!-- Bootstrap core CSS-->
       <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
       <!-- Custom fonts for this template-->
@@ -54,13 +61,13 @@ mysqli_close($conn);
          <button class="btn btn-link btn-sm text-secondary order-1 order-sm-0" id="sidebarToggle">
          <i class="fas fa-bars"></i>
          </button> &nbsp;&nbsp;
-         <a class="navbar-brand mr-1" href="index.html"><img class="img-fluid" width="25%" height="20%" alt="kinozone.co" src="img/logo.png"></a>
+         <a class="navbar-brand mr-1" href="index.php"><img class="img-fluid" alt="kinozone.co" src="img/logo_kinozone_small.png"></a>
          <!-- Navbar Search -->
-         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 osahan-navbar-search" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 osahan-navbar-search">
             <div class="input-group">
-               <input type="text" class="form-control" name="searchvalue" placeholder="Поиск по названию фильма или сериала...">
+               <input type="text" class="form-control" placeholder="Поиск по названию фильма или сериала...">
                <div class="input-group-append">
-                  <button class="btn btn-light" type="submit">
+                  <button class="btn btn-light" type="button">
                   <i class="fas fa-search"></i> 
                   </button>
                </div>
@@ -69,9 +76,9 @@ mysqli_close($conn);
          <!-- Navbar -->
          <ul class="navbar-nav ml-auto ml-md-0 osahan-right-navbar">
             <li class="nav-item mx-1">
-               <a class="nav-link" href="upload-video.html">
+               <a class="nav-link" href="upload-video.php">
                <i class="fas fa-plus-circle fa-fw"></i>
-               Добавить фильм
+               Добавить
                </a>
             </li>
             <li class="nav-item dropdown no-arrow mx-1">
