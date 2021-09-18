@@ -278,11 +278,14 @@ if(isset($_GET['year'])) {
                                         <div class=\"channels-card-image\">
                                         <a href=\"video-page.php?filmId=".$v[1]."\"><img class=\"img-fluid\" src=\"" . $v[7] . "\" alt=\"\"></a>
                                        <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=".$v[1]."'\"
-                                       class=\"btn btn-outline-secondary btn-sm\">" . $v[3] . "
-                                       <i class=\"fas fa-star\"></i>&nbsp;".$v[11]."</a></button></div>
+                                       class=\"btn btn-outline-secondary btn-sm\">" . $v[3] . "";
+                                       if($v[11]>0||$v[13]>0){
+                                           echo "<i class=\"fas fa-star\"></i>&nbsp;";
+                                           if($v[11]>0){echo $v[11];}elseif($v[13]>0){echo $v[13];}
+                                       }
+                                       echo "</a></button></div>
                                        </div>
-                                        <div class=\"channels-card-body\">
-                                       
+                                        <div class=\"channels-card-body\">                                  
                                          <div class=\"channels-view\">
                                          " . $v[34] . "
                                         </div>

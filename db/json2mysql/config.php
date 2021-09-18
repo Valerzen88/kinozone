@@ -11,3 +11,15 @@ const DATABASE_USER = "kinozone_usr";
 const DATABASE_PASS = "root";
 const JSONTOMYSQL_LOCKED = false;
 
+// Create connection
+$conn = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS);
+
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+$res=mysqli_select_db($conn,DATABASE_NAME);
+if (!$res) {
+    die("Connection failed: " . mysqli_connect_error());
+}
