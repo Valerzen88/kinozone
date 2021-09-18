@@ -8,18 +8,18 @@ if(isset($_POST['searchvalue'])) {
 	OR nameOriginal=\"".Switcher::fromCyrillic($_POST["searchvalue"])."\" OR kinopoiskId=\"".$_POST["searchvalue"]
 	."\" or year like \"%".$_POST["searchvalue"]."%\"";
 	$result=mysqli_query($conn,$sql);
-    var_dump($sql);
+
 	if($result){
         if(mysqli_num_rows($result)==1) {
             while ($row = mysqli_fetch_row($result)) {
-                $new_uri = str_replace("index.php", "video-page.php", $_SERVER["REQUEST_URI"]) . "?filmId=" . $row[0];
+                $new_uri = str_replace("index.php", "video-page.php?filmId=" . $row[0], $_SERVER["REQUEST_URI"]);
             }
             mysqli_free_result($result);
             mysqli_close($conn);
             header('Location: ' . $new_uri);
             exit();
         }else if(mysqli_num_rows($result)>1) {
-            $new_uri = str_replace("index.php", "videos_list.php", $_SERVER["REQUEST_URI"]) . "?s=" . $_POST["searchvalue"];
+            $new_uri = str_replace("index.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);
             mysqli_free_result($result);
             mysqli_close($conn);
             header('Location: ' . $new_uri);

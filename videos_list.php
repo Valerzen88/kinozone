@@ -4,6 +4,26 @@ include("switcher.php");
 include("queries.php");
 $films_list=array();
 $films_amount=array();
+$results_per_page = 24;
+$total_count=0;
+$sql="SELECT count(kinopoiskId) FROM films where nameRu IS NOT NULL and year=2020";
+$result=mysqli_query($conn,$sql);
+if($result) {
+    while ($row = mysqli_fetch_row($result)) {
+        $total_count=$row[0];
+    }
+    mysqli_free_result($result);
+}
+$number_of_pages = ceil ($total_count / $results_per_page);
+if (!isset ($_GET['p']) ) {
+    $page = 1;
+} else {
+    $page = $_GET['p'];
+}
+$page_first_result = ($page-1) * $results_per_page;
+$query = "SELECT * FROM films where nameRu IS NOT NULL and year=2020 LIMIT " . $page_first_result . ',' . $results_per_page;
+$result = mysqli_query($conn, $query);
+
 if(isset($_GET['year'])) {
 	$sql="SELECT count(kinopoiskId) FROM films where year=".$_GET['year']." and nameRu IS NOT NULL";
 	$result=mysqli_query($conn,$sql);
@@ -275,14 +295,19 @@ if(isset($_GET['year'])) {
                       <div class="col-md-12">
                           <nav aria-label="Page navigation example">
                               <ul class="pagination justify-content-center pagination-sm mb-4">
-                                  <li class="page-item disabled">
-                                      <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                  <?php $prev_disabled="";if($page==1) {$prev_disabled=" disabled";}?>
+                                  <li class="page-item<?php echo $prev_disabled;?>">
+                                      <a class="page-link" href="videos_list.php?p=<?php echo $page-1; ?>" tabindex="-1"><i class="fas fa-angle-left"></i></a>
                                   </li>
-                                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                  <li class="page-item">
-                                      <a class="page-link" href="#">Next</a>
+                                  <?php for($page_ = 1; $page_<= $number_of_pages; $page_++) {
+                                      $active="";$link_disabled="";if($page==$page_) {$active=" active";$link_disabled=" disabled";}
+                                      $params="";if(isset($_GET["s"])) {$params="s=".$_GET["s"];}elseif (isset($_GET["year"])) {$params="year=".$_GET["year"];}
+                                      echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
+                                      href="videos_list.php?'.$params.'&p=' . $page_ . '">' . $page_ . ' </a></li>';
+                                  }?>
+                                  <?php $next_disabled="";if(isset($_GET['p'])&&$_GET['p']==$number_of_pages) {$next_disabled=" disabled";}?>
+                                  <li class="page-item<?php echo $next_disabled;?>">
+                                      <a class="page-link" href="videos_list.php?p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
                                   </li>
                               </ul>
                           </nav>

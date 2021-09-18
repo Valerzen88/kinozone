@@ -13,11 +13,8 @@ if(isset($_POST['searchvalue'])) {
 		  $new_uri = $_SERVER["REQUEST_URI"]."?filmId=".$row[0];		
 	  }
 	  mysqli_free_result($result);
-	  header('Location: '.$new_uri);
-	  exit();
 	}
-}
-if(isset($_GET['filmId'])&&strlen($_GET['filmId'])!=0){
+}else if(isset($_GET['filmId'])&&strlen($_GET['filmId'])>0){
 	$sql="SELECT * FROM films where kinopoiskId=".$_GET["filmId"];
 	$result=mysqli_query($conn,$sql);
 	if($result) {
@@ -26,8 +23,10 @@ if(isset($_GET['filmId'])&&strlen($_GET['filmId'])!=0){
 		}
 		mysqli_free_result($result);
 	}
-}else if(strlen($_GET['filmId'])==0){
-     header("Location: " . str_replace("video-page.php?filmId=","",$_SERVER["REQUEST_URI"]));
+}else if(isset($_GET['filmId'])&&strlen($_GET['filmId'])==0){
+    header("Location: " . str_replace("video-page.php?filmId=","",$_SERVER["REQUEST_URI"]));
+}else{
+    header("Location: " . str_replace("video-page.php","",$_SERVER["REQUEST_URI"]));
 }
 mysqli_close($conn);
 ?>
@@ -237,7 +236,7 @@ mysqli_close($conn);
                               <script>
                                  var dataUrl=window.location.href;
                                  var my_script_play = document.createElement("script");
-                                 my_script_play.setAttribute("src",'//pleer.videoplayers.club/get_player?h=450&kp_id=<?php if(isset($_GET["filmId"])){echo intval($_GET["filmId"]);}else{echo 448;}?>&type=widget&players=videocdn,hdvb,apicollaps,bazon,alloha,ustore,kodik,trailer,torrent&r_id=videoplayers&ani=Плеер 2&ati=&adi=&vni=Плеер 1&vti=&vdi=&hni=Плеер 3&hti=&hdi=&bni=Плеер 4&bti=&bdi=&alni=Плеер 5&alti=&aldi=&usni=Плеер 6&usti=&usdi=&koni=Плеер 7&koti=&kodi=&tti=&ru='+dataUrl);
+                                 my_script_play.setAttribute("src",'//pleer.videoplayers.club/get_player?h=450&kp_id=<?php if(isset($_GET["filmId"])){echo intval($_GET["filmId"]);}else{echo 448;}?>&type=widget&players=videocdn,hdvb,apicollaps,bazon,alloha,ustore,kodik,trailer,torrent&r_id=videoplayers&ani=Плеер 3&ati=&adi=&vni=Плеер 1&vti=&vdi=&hni=Плеер 2&hti=&hdi=&bni=Плеер 4&bti=&bdi=&alni=Плеер 5&alti=&aldi=&usni=Плеер 6&usti=&usdi=&koni=Плеер 7&koti=&kodi=&tti=&ru='+dataUrl);
                                  my_script_play.async = true;
                                  document.head.appendChild(my_script_play);
                               </script>
