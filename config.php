@@ -5,9 +5,9 @@
  */
 
 define("ROOT", dirname(__FILE__) . "/");
-const DATABASE_HOST = "127.0.0.1:3308";
+const DATABASE_HOST = "127.0.0.1:3306";
 const DATABASE_NAME = "kinozone";
-const DATABASE_USER = "root";
+const DATABASE_USER = "kinozone_usr";
 const DATABASE_PASS = "root";
 const JSONTOMYSQL_LOCKED = false;
 

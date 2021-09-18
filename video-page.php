@@ -27,7 +27,7 @@ if(isset($_GET['filmId'])&&strlen($_GET['filmId'])!=0){
 		mysqli_free_result($result);
 	}
 }else if(strlen($_GET['filmId'])==0){
-     //header("Location: " . str_replace("video-page.php?filmId=","",$_SERVER["REQUEST_URI"]));
+     header("Location: " . str_replace("video-page.php?filmId=","",$_SERVER["REQUEST_URI"]));
 }
 mysqli_close($conn);
 ?>
@@ -143,24 +143,24 @@ mysqli_close($conn);
                <span>Новинки</span>
                </a>
             </li>
-            <li class="nav-item">
-               <a class="nav-link" href="videos_list.php?year=2021">
-               <i class="fas fa-fw fa-film"></i>
-               <span>2021 (<?php echo $films_amount[0][0];?>)</span>
-               </a>
-            </li>
-            <li class="nav-item">
-               <a class="nav-link" href="videos_list.php?year=2020">
-               <i class="fas fa-fw fa-film"></i>
-               <span>2020 (<?php echo $films_amount[1][0];?>)</span>
-               </a>
-            </li>
-			<li class="nav-item">
-               <a class="nav-link" href="videos_list.php?year=2019">
-               <i class="fas fa-fw fa-film"></i>
-               <span>2019 (<?php echo $films_amount[2][0];?>)</span>
-               </a>
-            </li>
+             <li class="nav-item">
+                 <a class="nav-link" href="videos_list.php?year=2021">
+                     <i class="fas fa-fw fa-film"></i>
+                     <span>2021 (<?php echo $films_amount_2021[0][0];?>)</span>
+                 </a>
+             </li>
+             <li class="nav-item">
+                 <a class="nav-link" href="videos_list.php?year=2020">
+                     <i class="fas fa-fw fa-film"></i>
+                     <span>2020 (<?php echo $films_amount_2020[0][0];?>)</span>
+                 </a>
+             </li>
+             <li class="nav-item">
+                 <a class="nav-link" href="videos_list.php?year=2019">
+                     <i class="fas fa-fw fa-film"></i>
+                     <span>2019 (<?php echo $films_amount_2019[0][0];?>)</span>
+                 </a>
+             </li>
             <li class="nav-item">
                <a class="nav-link" href="upload-video.html">
                <i class="fas fa-fw fa-cloud-upload-alt"></i>
@@ -237,7 +237,7 @@ mysqli_close($conn);
                               <script>
                                  var dataUrl=window.location.href;
                                  var my_script_play = document.createElement("script");
-                                 my_script_play.setAttribute("src",'//pleer.videoplayers.club/get_player?h=450&kp_id=<?php if(isset($_GET["filmId"])){echo intval($_GET["filmId"]);}else{echo 448;}?>&type=widget&players=videocdn,hdvb,apicollaps,bazon,alloha,ustore,kodik,trailer,torrent&r_id=videoplayers&ani=COLLAPS&ati=&adi=&vni=VIDEOCDN&vti=&vdi=&hni=HDVB&hti=&hdi=&bni=BAZON&bti=&bdi=&alni=ALLOHATV&alti=&aldi=&usni=USTOREBZ&usti=&usdi=&koni=KODIK&koti=&kodi=&tti=&ru='+dataUrl);
+                                 my_script_play.setAttribute("src",'//pleer.videoplayers.club/get_player?h=450&kp_id=<?php if(isset($_GET["filmId"])){echo intval($_GET["filmId"]);}else{echo 448;}?>&type=widget&players=videocdn,hdvb,apicollaps,bazon,alloha,ustore,kodik,trailer,torrent&r_id=videoplayers&ani=Плеер 2&ati=&adi=&vni=Плеер 1&vti=&vdi=&hni=Плеер 3&hti=&hdi=&bni=Плеер 4&bti=&bdi=&alni=Плеер 5&alti=&aldi=&usni=Плеер 6&usti=&usdi=&koni=Плеер 7&koti=&kodi=&tti=&ru='+dataUrl);
                                  my_script_play.async = true;
                                  document.head.appendChild(my_script_play);
                               </script>
@@ -258,19 +258,30 @@ mysqli_close($conn);
 							  }else if($film_info[0][32]=="age18"){
 								  $age="18";
 							  }					  
-							  echo "<span style='padding-left:15px;'><i class='fas fa-user-shield'></i>&nbsp;$age+&nbsp;</span>";
-							  ?>						  
-							  <span style="padding-left:15px;"><i class="fas fa-clock"></i> <?php echo $film_info[0][23];?> мин.</span></p>
+							  echo "<span style='padding-left:15px;'><i class='fas fa-user-shield'></i> Возраст: &nbsp;$age+&nbsp;</span>";
+                              if($film_info[0][23]!=null){
+                                  echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clock\"></i>&nbsp; ".$film_info[0][23]." мин.</span>";
+                              }
+                              if($film_info[0][30]=="FILM") {
+                                  echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clipboard-list\"></i> Категория: Фильм</span>";
+                              }elseif ($film_info[0][30]=="TV_SERIES") {
+                                  echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clipboard-list\"></i> Категория: Сериал</span>";
+                              }elseif ($film_info[0][30]=="MINI_SERIES") {
+                                  echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clipboard-list\"></i> Категория: Мини-сериал</span>";
+                              }
+                              ?>
+                              </p>
                            </div>
                            <div class="single-video-info-content box mb-3">
 							  <h6>Описание:</h6>
                               <p><?php echo $film_info[0][25]; ?></p>
                               <h6>В ролях:</h6>
-                              <p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
-                              <h6>Категории:</h6>
-                              <p><?php echo $film_info[0][34]; ?></p>         
-							  <h6>Оригинальное название:</h6>
-                              <p><?php echo $film_info[0][5]; ?></p>       							  
+                              <p></p>
+                              <h6>Жанры:</h6>
+                              <p><?php echo $film_info[0][34]; ?></p>
+                              <?php if($film_info[0][5]!=null){
+                                  echo "<h6>Оригинальное название:</h6><p>".$film_info[0][5]."</p>";
+                              } ?>
                               <h6>Тэги:</h6>
                               <p class="tags mb-0">
                                  <span><a href="#">Тэг1</a></span>

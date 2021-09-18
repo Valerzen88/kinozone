@@ -370,28 +370,31 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
 		
 		foreach($json_obj as $key => $value){
 			if(is_array($value)){
- 				echo "need to handle _array_ subdata for values<br>";
-                $vlist="";
-                foreach($value as $k => $v) {
-                    $vlist .= implode("",array_values((array)$v)).", ";
-                }
-                $colname = $this->getColumnNameForKey(array_key_first((array)$value[0]));
-                if(strlen($fields)){
-                    $fields .= ",";
-                    $values .= ",";
-                }
-                $fields .= "`" . $colname . "`";
+                if(count((array)$value)>0) {
+                    echo "need to handle _array_ subdata for values<br>";
+                    $vlist = "";
+                    var_dump($value);
+                    foreach ($value as $k => $v) {
+                        $vlist .= implode("", array_values((array)$v)) . ", ";
+                    }
+                    $colname = $this->getColumnNameForKey(array_key_first((array)$value[0]));
+                    if (strlen($fields)) {
+                        $fields .= ",";
+                        $values .= ",";
+                    }
+                    $fields .= "`" . $colname . "`";
 
-                if(is_bool($value)){
-                    $value = (int)$value;
-                }
+                    if (is_bool($value)) {
+                        $value = (int)$value;
+                    }
 
-                if(is_null($value)){
-                    $values .= "NULL";
-                }else{
-                    $values .= "'" . addslashes(substr($vlist,0,-2)) . "'";
+                    if (is_null($value)) {
+                        $values .= "NULL";
+                    } else {
+                        $values .= "'" . addslashes(substr($vlist, 0, -2)) . "'";
+                    }
+                    echo "values=" . $values;
                 }
-                echo "values=".$values;
 			}else if(is_object($value)){
  				echo "need to handle _object_ subdata for values\n";
 			}else{

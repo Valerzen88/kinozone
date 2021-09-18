@@ -405,6 +405,7 @@ Version: 1.0
 }
  .osahan-navbar-search .form-control {
     background: #121212 none repeat scroll 0 0;
+     color: #b3b7bb;
     border: 1px solid #303030;
     font-size: 14px;
     max-width: 607px !important;
@@ -976,12 +977,12 @@ Version: 1.0
 }
  .channels-card-image img {
      background: #1c1c1c none repeat scroll 0 0;
-     border-radius: 50px;
-     height: 80px;
+     border-radius: 125px;
+     height:220px;
      margin: 1px 0 8px;
      object-fit: scale-down;
      transform: scale(1);
-     width: 80px;
+     width: 250px;
 }
  .channels-card-image-btn {
      margin: 3px 0 7px;
