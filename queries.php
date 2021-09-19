@@ -28,12 +28,12 @@ if(isset($conn)) {
         mysqli_free_result($result);
     }
 }
-if(isset($_POST["searchvalue"])){
+if(isset($_POST["livesearch"])){
     include_once("config.php");
     include_once("switcher.php");
-    $s = "'%".$_POST["searchvalue"]."%'";
-    $s_to_cyr = "'%".Switcher::toCyrillic($_POST["searchvalue"])."%'";
-    $s_from_cyr = "'%".Switcher::fromCyrillic($_POST["searchvalue"])."%'";
+    $s = "'%".$_POST["livesearch"]."%'";
+    $s_to_cyr = "'%".Switcher::toCyrillic($_POST["livesearch"])."%'";
+    $s_from_cyr = "'%".Switcher::fromCyrillic($_POST["livesearch"])."%'";
     $sql = "SELECT nameRu,kinopoiskId,year FROM films WHERE year like ".$s." or nameRu like ".$s_to_cyr." or nameOriginal like "
         .$s_from_cyr." or kinopoiskId like ".$s." order by kinopoiskId limit 3";
     $result=mysqli_query($conn,$sql);

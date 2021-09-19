@@ -4,25 +4,27 @@ include("switcher.php");
 include("queries.php");
 $film_info = array();
 $top_20_films = array();
-$sql = "SELECT * FROM kinozone.films WHERE year=2021 and filmLength>10 and ratingKinopoisk>'6.0' order by ratingKinopoiskVoteCount desc limit 20";
-$result = mysqli_query($conn, $sql);
-if ($result) {
-    if (mysqli_num_rows($result) > 1) {
-        while ($row = mysqli_fetch_row($result)) {
-            array_push($top_20_films, $row);
+if(isset($conn)) {
+    $sql = "SELECT * FROM kinozone.films WHERE year=2021 and filmLength>10 and ratingKinopoisk>'6.0' order by ratingKinopoiskVoteCount desc limit 20";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        if (mysqli_num_rows($result) > 1) {
+            while ($row = mysqli_fetch_row($result)) {
+                array_push($top_20_films, $row);
+            }
+            mysqli_free_result($result);
         }
-        mysqli_free_result($result);
     }
-}
-$genres = array();
-$sql = "SELECT * FROM genre";
-$result = mysqli_query($conn, $sql);
-if ($result) {
-    if (mysqli_num_rows($result) > 1) {
-        while ($row = mysqli_fetch_row($result)) {
-            array_push($genres, $row);
+    $genres = array();
+    $sql = "SELECT * FROM genre";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        if (mysqli_num_rows($result) > 1) {
+            while ($row = mysqli_fetch_row($result)) {
+                array_push($genres, $row);
+            }
+            mysqli_free_result($result);
         }
-        mysqli_free_result($result);
     }
 }
 if (isset($_POST['searchvalue'])) {
@@ -81,6 +83,35 @@ if (isset($_POST['searchvalue'])) {
     <!-- Owl Carousel -->
     <link rel="stylesheet" href="vendor/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="vendor/owl-carousel/owl.theme.css">
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.input-group input[type="text"]').on("keyup input", function () {
+                /* Get input value on change */
+                var inputVal = $(this).val();
+                var resultDropdown = $(this).siblings(".result");
+                if (inputVal.length > 3) {
+                    $(".icon-container").show();
+                    $.post("queries.php", {livesearch: inputVal})
+                        .done(function (data) {
+                            // Display the returned data in browser
+                            resultDropdown.html(data).after(function () {
+                                $('.icon-container').hide();
+                            });
+                        });
+                } else if (inputVal.length === 0) {
+                    resultDropdown.empty();
+                }
+            });
+            // Set search input value on click of result item
+            $(document).on("click", ".result p", function () {
+                $(this).parents(".input-group").find('input[type="text"]').val($(this).text());
+                $(this).parent(".result").val('');
+                $(this).parent(".result").empty();
+            });
+        });
+    </script>
 </head>
 <body id="page-top">
 <nav class="navbar navbar-expand navbar-light bg-white static-top osahan-nav sticky-top">
@@ -96,11 +127,15 @@ if (isset($_POST['searchvalue'])) {
         <div class="input-group">
             <input type="text" class="form-control" name="searchvalue"
                    placeholder="Поиск по названию фильма или сериала...">
+            <div class="icon-container" style="display: none;">
+                <i class="loader"></i>
+            </div>
             <div class="input-group-append">
                 <button class="btn btn-light" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
+            <div class="result"></div>
         </div>
     </form>
     <!-- Navbar -->
@@ -519,8 +554,6 @@ if (isset($_POST['searchvalue'])) {
         </div>
     </div>
 </div>
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Core plugin JavaScript-->
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
