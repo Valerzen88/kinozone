@@ -30,7 +30,7 @@ if(isset($conn)) {
 }
 if(isset($_POST["searchvalue"])){
     include_once("config.php");
-    include("switcher.php");
+    include_once("switcher.php");
     $s = "'%".$_POST["searchvalue"]."%'";
     $s_to_cyr = "'%".Switcher::toCyrillic($_POST["searchvalue"])."%'";
     $s_from_cyr = "'%".Switcher::fromCyrillic($_POST["searchvalue"])."%'";

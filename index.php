@@ -14,6 +14,17 @@ if ($result) {
         mysqli_free_result($result);
     }
 }
+$genres = array();
+$sql = "SELECT * FROM genre";
+$result = mysqli_query($conn, $sql);
+if ($result) {
+    if (mysqli_num_rows($result) > 1) {
+        while ($row = mysqli_fetch_row($result)) {
+            array_push($genres, $row);
+        }
+        mysqli_free_result($result);
+    }
+}
 if (isset($_POST['searchvalue'])) {
     $sql = "SELECT kinopoiskId FROM films where nameRu=\"" . Switcher::toCyrillic($_POST["searchvalue"]) . "\" 
 	OR nameOriginal=\"" . Switcher::fromCyrillic($_POST["searchvalue"]) . "\" OR kinopoiskId=\"" . $_POST["searchvalue"]
@@ -254,135 +265,24 @@ if (isset($_POST['searchvalue'])) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="main-title">
-                            <div class="btn-group float-right right-action" style="display:none;">
-                                <a href="#" class="right-action-link text-gray" data-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp;
-                                        Close</a>
-                                </div>
-                            </div>
                             <h6>Категории</h6>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="owl-carousel owl-carousel-category">
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s1.png" alt="">
-                                        <h6>Your Life</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s2.png" alt="">
-                                        <h6>Unboxing Cool</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s3.png" alt="">
-                                        <h6>Service Reviewing</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s4.png" alt="">
-                                        <h6>Gaming <span title="" data-placement="top" data-toggle="tooltip"
-                                                         data-original-title="Verified"><i
-                                                        class="fas fa-check-circle text-success"></i></span></h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s5.png" alt="">
-                                        <h6>Technology Tutorials</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s6.png" alt="">
-                                        <h6>Singing</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s7.png" alt="">
-                                        <h6>Cooking</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s8.png" alt="">
-                                        <h6>Traveling</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s1.png" alt="">
-                                        <h6>Education</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s2.png" alt="">
-                                        <h6>Noodles, Sauces & Instant Food</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s3.png" alt="">
-                                        <h6>Comedy <span title="" data-placement="top" data-toggle="tooltip"
-                                                         data-original-title="Verified"><i
-                                                        class="fas fa-check-circle text-success"></i></span></h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="category-item">
-                                    <a href="#">
-                                        <img class="img-fluid" src="img/s4.png" alt="">
-                                        <h6>Lifestyle Advice</h6>
-                                        <p>74,853 views</p>
-                                    </a>
-                                </div>
-                            </div>
+                            <?php
+                            foreach ($genres as $k => $v) {
+                                echo "<div class=\"item\">
+                                        <div class=\"category-item\">
+                                            <a href=\"videos_list.php?genre=" . $v[0] . "\">
+                                                <img class=\"img-fluid\" src=\"img/s1.png\" title=\"" . mb_strtoupper($v[0]) . "\" alt=\"" . mb_strtoupper($v[0]) . "\">
+                                                <h6 title=\"" . mb_strtoupper($v[0]) . "\">" . mb_strtoupper($v[0]) . "</h6>
+                                                <p>" . $v[1] . " фильмов</p>
+                                            </a>
+                                        </div>
+                                    </div>";
+                                }
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -552,8 +452,7 @@ if (isset($_POST['searchvalue'])) {
                     <p>Сегодня достаточно сложно представить нашу жизнь без кинематографа. Он охватывает практически все
                         сферы деятельности человека. Ему чуть больше века, однако, это искусство постоянно
                         совершенствуется и меняется в лучшую сторону.</p>
-                    <p><img alt="фильмы онлайн" src="kinozoneco.jpg"
-                            style="border-radius:10px; float:left; margin-right:10px">На сегодняшний день снимается
+                    <p>На сегодняшний день снимается
                         такое большое количество фильмов, что почти каждый день проходят премьеры по всему миру. Однако
                         в стремительном ритме современной жизни не у каждого есть возможность посещать кинотеатры для
                         того, чтобы насладиться просмотром желаемой кинокартины или познакомиться с новинкой, вышедшей
