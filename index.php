@@ -310,7 +310,7 @@ if (isset($_POST['searchvalue'])) {
                                 echo "<div class=\"item\">
                                         <div class=\"category-item\">
                                             <a href=\"videos_list.php?genre=" . $v[0] . "\">
-                                                <img class=\"img-fluid\" src=\"img/s1.png\" title=\"" . mb_strtoupper($v[0]) . "\" alt=\"" . mb_strtoupper($v[0]) . "\">
+                                                <img class=\"img-fluid\" src=\"img/genres/".$v[0].".png\" title=\"" . mb_strtoupper($v[0]) . "\" alt=\"" . mb_strtoupper($v[0]) . "\">
                                                 <h6 title=\"" . mb_strtoupper($v[0]) . "\">" . mb_strtoupper($v[0]) . "</h6>
                                                 <p>" . $v[1] . " фильмов</p>
                                             </a>
@@ -517,7 +517,7 @@ if (isset($_POST['searchvalue'])) {
                 <div class="row no-gutters">
                     <div class="col-lg-6 col-sm-6">Сделано с <i class="fas fa-heart text-danger"></i> в 2021 :: <strong
                                 class="text-dark">KINOZONE.CO</strong>.
-                        <a href="copyright_terms.php">Правообладателям</a> | <a href="/">Главная</a><br>
+                       <a href="copyright_terms.php">Правообладателям</a> | <a href="/">Главная</a> | Иконки от <a target="_blank" href="https://icons8.ru">Icons8</a><br>
 
                         </p>
                     </div>

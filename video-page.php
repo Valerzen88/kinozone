@@ -266,6 +266,7 @@ mysqli_close($conn);
                         <div class="single-video-left">
                            <div class="single-video">
                                <div class="uitools" id="videoplayers" style="min-height:450px !important;background-image: url('//pleer.videoplayers.club/web/img/loader.gif');background-repeat: no-repeat;background-position: center;background-color: #ccc;"></div>
+							  <?php if(isset($_GET["filmId"])){ ?>
                               <script>
                                  var dataUrl=window.location.href;
                                  var my_script_play = document.createElement("script");
@@ -273,6 +274,7 @@ mysqli_close($conn);
                                  my_script_play.async = true;
                                  document.head.appendChild(my_script_play);
                               </script>
+							  <?php }else{echo "<h6>Запрос не смог быть обработан. Попробуйте другой фильм. Мы приносим свои извинения за ошибку!</h6>";}?>
                            </div>
                            <div class="single-video-title box mb-3">
                               <h2><?php echo $film_info[0][3]." (".$film_info[0][22].")"; ?></h2>
