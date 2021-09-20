@@ -34,9 +34,8 @@ if(isset($conn)) {
 if (isset($_POST['searchvalue'])) {
     $sql = "SELECT kinopoiskId FROM films where nameRu=\"" . Switcher::toCyrillic($_POST["searchvalue"]) . "\" 
 	OR nameOriginal=\"" . Switcher::fromCyrillic($_POST["searchvalue"]) . "\" OR kinopoiskId=\"" . $_POST["searchvalue"]
-        . "\" or year like \"%" . $_POST["searchvalue"] . "%\"";
+        . "\" or year like \"%" . $_POST["searchvalue"] . "%\" order by kinopoiskId desc";
     $result = mysqli_query($conn, $sql);
-
     if ($result) {
         if (mysqli_num_rows($result) == 1) {
             while ($row = mysqli_fetch_row($result)) {
@@ -55,24 +54,6 @@ if (isset($_POST['searchvalue'])) {
         }
     }
 }
-$sql="SELECT count(kinopoiskId) FROM films where nameRu IS NOT NULL and year=2020";
-$result=mysqli_query($conn,$sql);
-if($result) {
-    while ($row = mysqli_fetch_row($result)) {
-        $total_count=$row[0];
-    }
-    mysqli_free_result($result);
-}
-$number_of_pages = ceil ($total_count / $results_per_page);
-if (!isset ($_GET['p']) ) {
-    $page = 1;
-} else {
-    $page = $_GET['p'];
-}
-$page_first_result = ($page-1) * $results_per_page;
-$query = "SELECT * FROM films where nameRu IS NOT NULL and year=2020 LIMIT " . $page_first_result . ',' . $results_per_page;
-$result = mysqli_query($conn, $query);
-
 if(isset($_GET['year'])) {
     $sql="SELECT count(kinopoiskId) FROM films where year=".$_GET['year']." and nameRu IS NOT NULL";
     $result=mysqli_query($conn,$sql);
@@ -233,7 +214,7 @@ if(isset($_GET['year'])) {
                 <i class="loader"></i>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-light" type="submit">
+                <button class="btn btn-light" type="button">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
