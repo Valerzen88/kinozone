@@ -36,7 +36,7 @@ class JSONtoMYSQL{
     {
 		$table = $this->table($tablename);
 		$table->validateTableFor($json_obj);
-		return $table->save($json_obj);
+		return $table->save($json_obj,$tablename);
 	}
 
     /**

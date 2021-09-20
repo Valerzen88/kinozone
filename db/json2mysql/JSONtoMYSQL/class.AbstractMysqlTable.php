@@ -72,11 +72,11 @@ abstract class AbstractMysqlTable{
 	 * does match a value in the primary column, otherwise
 	 * will insert a new row
 	 */
-	abstract public function save($json_data) : MySQLResult;
+	abstract public function save($json_data,$tablename) : MySQLResult;
 
 	abstract public function update($json_data) : MySQLResult;
 
-	abstract public function insert($json_data) : MySQLResult;
+	abstract public function insert($json_data,$tablename) : MySQLResult;
 
     abstract public function find(array $json_obj = array(), array $ops = null, array $orders = null) : MySQLResult;
 

@@ -10,7 +10,7 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
 
 	private $fields;
 
-	public function __construct($mysql, $tablename, $primary="id"){
+    public function __construct($mysql, $tablename, $primary="id"){
 		parent::__construct($mysql, $tablename, $primary);
 		$this->fields = array();
 	}
@@ -173,7 +173,7 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
      * insert a new row
      * @throws DatabaseException
      */
-	public function save($json_obj) : MySQLResult{
+	public function save($json_obj,$tablename) : MySQLResult{
 		$this->validateTableFor($json_obj);
 		$primary = $this->primary;
 		
@@ -191,10 +191,10 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
 				return $this->update($json_obj);
 			}else{
 				// doesn't exist yet, insert
-				return $this->insert($json_obj);
+				return $this->insert($json_obj,$tablename);
 			}
 		}else{
-			return $this->insert($json_obj);
+			return $this->insert($json_obj,$tablename);
 		}
 	}
 
@@ -363,27 +363,69 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
      * of the input json object
      * @throws DatabaseException
      */
-	public function insert($json_obj) : MySQLResult{
+	public function insert($json_obj,$tablename) : MySQLResult{
 		$this->validateTableFor($json_obj);
 		$fields = "";
 		$values = "";
-		
-		foreach($json_obj as $key => $value){
-			if(is_array($value)){
-                if(count((array)$value)>0) {
-                    echo "need to handle _array_ subdata for values<br>";
-                    $vlist = "";
-                    var_dump($value);
-                    foreach ($value as $k => $v) {
-                        $vlist .= implode("", array_values((array)$v)) . ", ";
-                    }
-                    $colname = $this->getColumnNameForKey(array_key_first((array)$value[0]));
-                    if (strlen($fields)) {
-                        $fields .= ",";
-                        $values .= ",";
-                    }
-                    $fields .= "`" . $colname . "`";
+		$personId = "";
 
+		foreach($json_obj as $key => $value){
+            if($key==="personId") {$personId=$value;}
+            if(is_object($value)){$value=get_object_vars($value);}
+			if(is_array($value)){
+                if(count($value)>0) {
+                    //echo "+++need to handle _array_ subdata for values+++<br>";
+                    $vlist = "";
+                    $temp_v=array();
+                    foreach ($value as $k => $v) {
+                        if($tablename!=="staff_roles"){
+                            /*echo "<br>+++v<br>";
+                            var_dump(get_object_vars($v));
+                            echo "<br>+++k<br>";
+                            var_dump(array_values($value));
+                            echo "<br>+++<br>";*/
+                            foreach (array_values($value) as $k => $v){
+                                $temp_v[$k]=(array_values(get_object_vars($v)))[0];
+                            }
+                            //echo "***temp_v=";
+                            //var_dump(array_values($temp_v));
+                        }else{
+                            $temp=array();
+                            foreach($value as $k => $v){
+                                $v = get_object_vars($v);
+                                $v["personId"] = $personId;
+                                $v=$this->convertToObject($v);
+                                $temp[$k] = $v;
+                            }
+                            $value = $temp;
+                            $this->validateTableForCreate($value);
+                            $this->insert($value,"staff_roles");
+                            $personId="";
+                        }
+                    }
+                    if($tablename!=="staff_roles") {
+                        $vlist .= implode(",", array_values($temp_v));
+                    }
+                    $this ->tablename=$tablename;
+                    foreach($value as $k => $v) {
+                       // if(is_string($k)) {
+                            $colname = $this->getColumnNameForKey(array_key_first(get_object_vars($v)));
+                        //}
+                        /*echo "<br>***=>tablename:".$tablename."<br>";
+                        echo "<br>***=>".var_dump($value);*/
+                        //echo "<br>***=>".var_dump($k);
+                        //echo "<br>***=>".var_dump(array_key_first(get_object_vars($v)));
+                        /*echo "<br>***=>colname:".$colname;
+                        echo "<br>****<br>";*/
+                        //echo "<br>fields=" . $fields;
+                        if(!stripos($fields,$colname)) {
+                            if (strlen($fields)) {
+                                $fields .= ",";
+                                $values .= ",";
+                            }
+                            $fields .= "`" . $colname . "`";
+                        }
+                    }
                     if (is_bool($value)) {
                         $value = (int)$value;
                     }
@@ -391,9 +433,10 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                     if (is_null($value)) {
                         $values .= "NULL";
                     } else {
-                        $values .= "'" . addslashes(substr($vlist, 0, -2)) . "'";
+                        $values .= "'" . addslashes(substr($vlist, 0))."'";
                     }
-                    echo "values=" . $values;
+                    //echo "<br>fields=" . $fields;
+                    //echo "<br>values=" . $values;
                 }
 			}else if(is_object($value)){
  				echo "need to handle _object_ subdata for values\n";
@@ -420,13 +463,103 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
 		if(strlen($fields)){
 			$sql = "INSERT INTO `" . addslashes($this->tablename) . "` "
 				 . "(" . $fields . ") VALUES (" . $values . ")";
-			
-			return $this->mysql->query($sql);
-		}else{
+			//var_dump($sql);
+        }else{
             $sql = "SELECT 0 LIMIT 0";
-            return $this->mysql->query($sql);
         }
-	}
+        return $this->mysql->query($sql);
+    }
+
+    function convertToObject($array): stdClass
+    {
+        $object = new stdClass();
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $value = convertToObject($value);
+            }
+            $object->$key = $value;
+        }
+        return $object;
+    }
+    public function validateTableForCreate($data, Closure $typeForColName = null, Closure $nullabilityForColName = null) : array {
+        if($this->isLocked()){
+            throw new DatabaseException("JsonToMysql is locked. Cannot create new table " . $this->tablename);
+        }
+
+        $colstr = "";
+        foreach($data as $key => $value){
+            $value=get_object_vars($value);
+            if(is_array($value)){
+                echo "<br>***need to handle _array_ subdata for columns***<br>";
+                foreach($value as $key2 => $value2){
+                    $colname = $this->getColumnNameForKey($key2);
+                    $type = $this->getMysqlTypeForValue($value2);
+                    $nullable = true;
+
+                    if($typeForColName){
+                        $typeInfo = $typeForColName($colname, $value2, $type);
+                        if(is_array($typeInfo)){
+                            $type = $typeInfo[0];
+                            $nullable = $typeInfo[1];
+                        }else{
+                            $type = $typeInfo;
+                        }
+                    }
+
+                    if(!$type){
+                        /** @noinspection ForgottenDebugOutputInspection */
+                        error_log(" - unknown type for column " . $colname);
+                    }
+                    $nullability = $nullable ? " NULL" : " NOT NULL";
+
+                    if(!stripos($colstr,$colname)) {
+                        $colstr .= "  `" . $colname . "` " . $type . $nullability . ",";
+                    }
+                }
+
+            }else if(is_object($value)){
+                echo "<br>need to handle _object_ subdata for columns<br>";
+            }else if($key != $this->primary){
+                $colname = $this->getColumnNameForKey($key);
+                $type = $this->getMysqlTypeForValue($value);
+                $nullable = true;
+
+                if($typeForColName){
+                    $typeInfo = $typeForColName($colname, $value, $type);
+                    if(is_array($typeInfo)){
+                        $type = $typeInfo[0];
+                        $nullable = $typeInfo[1];
+                    }else{
+                        $type = $typeInfo;
+                    }
+                }
+
+                if(!$type){
+                    /** @noinspection ForgottenDebugOutputInspection */
+                    error_log(" - unknown type for column " . $colname);
+                }
+
+                $nullability = $nullable ? " NULL" : " NOT NULL";
+                if(!stripos($colstr,$colname)) {
+                    if($colname==="personId" || $colname==="kinopoiskId"){$colname.=$colname." UNIQUE ";}
+                    $colstr .= "  `" . $colname . "` " . $type . $nullability . ",";
+                }
+            }
+        }
+
+
+        $sql = "CREATE TABLE IF NOT EXISTS `" . addslashes("staff_roles") . "` ("
+            . "  `" . $this->primary . "` bigint(20) NOT NULL auto_increment,"
+            . $colstr
+            . "  PRIMARY KEY  (`" . $this->primary . "`)"
+            . ") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+
+        $this->mysql->query($sql);
+
+        $issues = [];
+        $issues[] = ["notice" => "created table"];
+        return $issues;
+    }
 
     /**
      * returns true if the input column name already exists

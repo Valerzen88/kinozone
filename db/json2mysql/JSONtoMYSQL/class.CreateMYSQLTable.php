@@ -26,10 +26,6 @@ class CreateMYSQLTable extends ExistingMYSQLTable{
 			if(is_array($value)){
 				echo "<br>***need to handle _array_ subdata for columns***<br>";
                 foreach($value as $key2 => $value2){
-                    /*echo "<br>+++";
-                    var_dump(array_key_first((array)$value2));
-                    var_dump(implode(",",array_values((array)$value2)));
-                    echo "+++<br>";*/
                     $colname = $this->getColumnNameForKey(array_key_first((array)$value2));
                     $type = $this->getMysqlTypeForValue(implode(",",array_values((array)$value2)));
                     $nullable = true;
@@ -50,7 +46,13 @@ class CreateMYSQLTable extends ExistingMYSQLTable{
                     }
                     $nullability = $nullable ? " NULL" : " NOT NULL";
                 }
-                $colstr .= "  `" . $colname . "` " . $type . $nullability . ",";
+                if(!stripos($colstr,$colname)) {
+                    if($colname==="personId" || $colname==="kinopoiskId"){
+                        $colstr .= "  `" . $colname . "` " . $type . $nullability . " UNIQUE,";
+                    } else {
+                        $colstr .= "  `" . $colname . "` " . $type . $nullability . ",";
+                    }
+                }
 			}else if(is_object($value)){
 				echo "<br>need to handle _object_ subdata for columns<br>";
 			}else if($key != $this->primary){
@@ -74,8 +76,13 @@ class CreateMYSQLTable extends ExistingMYSQLTable{
 				}
 
 				$nullability = $nullable ? " NULL" : " NOT NULL";
-				
-				$colstr .= "  `" . $colname . "` " . $type . $nullability . ",";
+				if(!stripos($colstr,$colname)) {
+                    if($colname==="personId" || $colname==="kinopoiskId"){
+                        $colstr .= "  `" . $colname . "` " . $type . $nullability . " UNIQUE,";
+                    } else {
+                        $colstr .= "  `" . $colname . "` " . $type . $nullability . ",";
+                    }
+                }
 			}
 		}
 	
@@ -85,8 +92,9 @@ class CreateMYSQLTable extends ExistingMYSQLTable{
 			 . $colstr
 			 . "  PRIMARY KEY  (`" . $this->primary . "`)"
 			 . ") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-		
-		//$this->mysql->query($sql);
+
+        //var_dump($sql);
+		$this->mysql->query($sql);
 	
 		$issues = [];
 		$issues[] = ["notice" => "created table"];
