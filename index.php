@@ -201,7 +201,7 @@ if (isset($_POST['searchvalue'])) {
                 <span>Главная</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" style="display: none">
             <a class="nav-link" href="recently_added.php">
                 <i class="fas fa-fw fa-users"></i>
                 <span>Новинки</span>
@@ -231,23 +231,6 @@ if (isset($_POST['searchvalue'])) {
                 <span>Добавить фильм</span>
             </a>
         </li>
-        <li style="display:none;" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
-               aria-expanded="false">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>Pages</span>
-            </a>
-            <div class="dropdown-menu">
-                <h6 class="dropdown-header">Login Screens:</h6>
-                <a class="dropdown-item" href="login.html">Login</a>
-                <a class="dropdown-item" href="register.html">Register</a>
-                <a class="dropdown-item" href="forgot-password.html">Forgot Password</a>
-                <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">Other Pages:</h6>
-                <a class="dropdown-item" href="404.html">404 Page</a>
-                <a class="dropdown-item" href="blank.html">Blank Page</a>
-            </div>
-        </li>
         <li class="nav-item">
             <a class="nav-link" href="history-page.html">
                 <i class="fas fa-fw fa-history"></i>
@@ -255,15 +238,19 @@ if (isset($_POST['searchvalue'])) {
             </a>
         </li>
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="categories.html" role="navigation" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="true">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
                 <i class="fas fa-fw fa-list-alt"></i>
                 <span>Категории</span>
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="categories.html">Movie</a>
-                <a class="dropdown-item" href="categories.html">Music</a>
-                <a class="dropdown-item" href="categories.html">Television</a>
+                <?php
+                foreach ($genres as $k => $v) {
+                    echo "<a class=\"dropdown-item\"
+                           href=\"videos_list.php?genre=" . $v[0]."\">" . mb_strtoupper($v[0]) . "
+                        </a>";
+                }
+                ?>
             </div>
         </li>
         <li class="nav-item dropdown">
