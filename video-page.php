@@ -15,16 +15,38 @@ if ($result) {
     }
 }
 if(isset($_POST['searchvalue'])) {
-	$sql="SELECT kinopoiskId FROM films where nameRu=\"".Switcher::toCyrillic($_POST["searchvalue"])."\" 
-	OR nameOriginal=\"".Switcher::fromCyrillic($_POST["searchvalue"])."\" OR kinopoiskId=\"".$_POST["searchvalue"]
-	."\" or year like \"%".$_POST["searchvalue"]."%\" limit 1";
-	$result=mysqli_query($conn,$sql);
-	if($result) {
-	  while ($row = mysqli_fetch_row($result)) {
-		  $new_uri = $_SERVER["REQUEST_URI"]."?filmId=".$row[0];		
-	  }
-	  mysqli_free_result($result);
-	}
+    $sql = "SELECT kinopoiskId FROM films where nameRu=\"" . Switcher::toCyrillic($_POST["searchvalue"]) . "\" 
+	OR nameOriginal=\"" . Switcher::fromCyrillic($_POST["searchvalue"]) . "\" OR kinopoiskId=\"" . $_POST["searchvalue"]
+        . "\" or year like \"%" . $_POST["searchvalue"] . "%\" order by kinopoiskId desc";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        if (mysqli_num_rows($result) == 1) {
+            while ($row = mysqli_fetch_row($result)) {
+                if(strpos($_SERVER["REQUEST_URI"],"index.php")) {
+                    $new_uri = str_replace("index.php", "video-page.php?filmId=" . $row[0], $_SERVER["REQUEST_URI"]);
+                } else if (strpos($_SERVER["REQUEST_URI"],"video-page.php")) {
+                    $new_uri = str_replace("video-page.php", "video-page.php?filmId=" . $row[0], $_SERVER["REQUEST_URI"]);
+                }
+
+            }
+            mysqli_free_result($result);
+            mysqli_close($conn);
+            echo "bloob";
+            var_dump($new_uri);
+            header('Location: ' . $new_uri);
+            exit();
+        } else if (mysqli_num_rows($result) > 1) {
+            if(strpos($_SERVER["REQUEST_URI"],"index.php")) {
+                $new_uri = str_replace("index.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);
+            } else if (strpos($_SERVER["REQUEST_URI"],"video-page.php")) {
+                $new_uri = str_replace("video-page.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);
+            }
+            mysqli_free_result($result);
+            mysqli_close($conn);
+            header('Location: ' . $new_uri);
+            exit();
+        }
+    }
 }else if(isset($_GET['filmId'])&&strlen($_GET['filmId'])>0){
 	$sql="SELECT * FROM films where kinopoiskId=".$_GET["filmId"];
 	$result=mysqli_query($conn,$sql);
