@@ -42,7 +42,7 @@ if(isset($_GET["addNewFilmsJob"])) {
         $lastId = addFilms($lastId, $amount_ids, $db, $conn);
         $time_post = microtime(true);
         $exec_time = $time_post - $time_pre;
-        echo "<br>+++end job with " . $lastId . " new lines in ".sprintf('%f', $exec_time)." +++<br>";
+        echo "<br>+++end job with " . $lastId . " new lines in ".sprintf('%f', $exec_time)." min+++<br>";
     }
 }
 
