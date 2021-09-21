@@ -20,7 +20,7 @@ if(isset($conn)) {
         }
     }
     $genres = array();
-    $sql = "SELECT * FROM genre";
+    $sql = "SELECT * FROM genre where genre_one<>\"\"";
     $result = mysqli_query($conn, $sql);
     if ($result) {
         if (mysqli_num_rows($result) > 1) {

@@ -26,7 +26,7 @@ include_once("header.php");
                                         <div class=\"channels-card-image\">
                                         <a href=\"video-page.php?filmId=".$v[1]."\"><img class=\"img-fluid\" src=\"" . $v[7] . "\" alt=\"\"></a>
                                        <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=".$v[1]."'\"
-                                       class=\"btn btn-outline-secondary btn-sm\">" . $v[3] . "";
+                                       class=\"btn btn-outline-secondary btn-sm\">" . $v[3] . " (".$v[22].")";
                                        if($v[11]>0||$v[13]>0){
                                            echo "<span style='padding-left: 8px;'><i class=\"fas fa-star\"></i>&nbsp;";
                                            if($v[11]>0){echo $v[11];}elseif($v[13]>0){echo $v[13];}

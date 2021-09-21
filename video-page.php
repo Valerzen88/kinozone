@@ -4,7 +4,8 @@ include("switcher.php");
 include("queries.php");
 $film_info=array();
 $genres = array();
-$sql = "SELECT * FROM genre";
+$staff = array();
+$sql = "SELECT * FROM genre where genre_one<>\"\"";
 $result = mysqli_query($conn, $sql);
 if ($result) {
     if (mysqli_num_rows($result) > 1) {
@@ -31,8 +32,6 @@ if(isset($_POST['searchvalue'])) {
             }
             mysqli_free_result($result);
             mysqli_close($conn);
-            echo "bloob";
-            var_dump($new_uri);
             header('Location: ' . $new_uri);
             exit();
         } else if (mysqli_num_rows($result) > 1) {
@@ -61,6 +60,16 @@ if(isset($_POST['searchvalue'])) {
 }else{
     header("Location: " . str_replace("video-page.php","",$_SERVER["REQUEST_URI"]));
 }
+$sql = "SELECT nameRu FROM kinozone.staff where FIND_IN_SET('".$film_info[0][1]."',filmId);";
+$result = mysqli_query($conn, $sql);
+if ($result) {
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_row($result)) {
+           array_push($staff , $row[0]);
+        }
+        mysqli_free_result($result);
+    }
+}
 mysqli_close($conn);
 ?>
 <?php include_once("header_v_p.php"); ?>
@@ -83,8 +92,10 @@ mysqli_close($conn);
                            <div class="single-video-title box mb-3">
                               <h2><?php echo $film_info[0][3]." (".$film_info[0][22].")"; ?></h2>
 							  <p><?php echo $film_info[0][26]; ?></p>
-                              <p class="mb-0"><i class="fas fa-star"></i> Рейтинг: <?php echo $film_info[0][11]; ?> 
-							  <?php $age="";
+                              <p class="mb-0">
+                              <?php if($film_info[0][11]>0||$film_info[0][13]>0){ echo "<i class=\"fas fa-star\"></i>";
+                                if($film_info[0][11]>0) {echo "Рейтинг: ".$film_info[0][11];}elseif($film_info[0][13]>0){echo "Рейтинг: ".$film_info[0][13];}}
+							  $age="";
 							  if ($film_info[0][32]=="age0") {
 								  $age="0";
 							  }else if($film_info[0][32]=="age6"){
@@ -95,8 +106,10 @@ mysqli_close($conn);
 								  $age="16";
 							  }else if($film_info[0][32]=="age18"){
 								  $age="18";
-							  }					  
-							  echo "<span style='padding-left:15px;'><i class='fas fa-user-shield'></i> Возраст: &nbsp;$age+&nbsp;</span>";
+							  }
+                              if($age!=="") {
+                                  echo "<span style='padding-left:15px;'><i class='fas fa-user-shield'></i> Возраст: &nbsp;$age+&nbsp;</span>";
+                              }
                               if($film_info[0][23]!=null){
                                   echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clock\"></i>&nbsp; ".$film_info[0][23]." мин.</span>";
                               }
@@ -113,10 +126,10 @@ mysqli_close($conn);
                            <div class="single-video-info-content box mb-3">
 							  <h6>Описание:</h6>
                               <p><?php echo $film_info[0][25]; ?></p>
-                              <h6>В ролях:</h6>
-                              <p></p>
+                              <?php if(sizeof($staff)>0){ echo "<h6>В ролях:</h6>
+                              <p>".implode(", ",$staff)."</p>";}?>
                               <h6>Жанры:</h6>
-                              <p><?php echo $film_info[0][34]; ?></p>
+                              <p><?php echo str_ireplace(",",", ",$film_info[0][34]); ?></p>
                               <?php if($film_info[0][5]!=null){
                                   echo "<h6>Оригинальное название:</h6><p>".$film_info[0][5]."</p>";
                               } ?>
