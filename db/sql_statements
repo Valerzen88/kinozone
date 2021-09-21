@@ -1,0 +1,8 @@
+create table if not exists genre as select genre_one, count(1) as films_amount from (select nameRu, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
+  from films join numbers on char_length(genre)-char_length(replace(genre, ',', ''))>=n-1) gernes_count
+where nameRu is not null
+group by 1 order by 2 desc;
+create table if not exists countries as select country, count(1) as films_amount from (select country, nameRu, trim(substring_index(substring_index(country, ',', n), ',', -1)) as country_one
+  from films join numbers on char_length(country)-char_length(replace(country, ',', ''))>=n-1) countries_count
+  where nameRu is not null
+group by 1 order by 2 desc;
