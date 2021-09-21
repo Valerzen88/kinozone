@@ -379,11 +379,6 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                     $temp_v=array();
                     foreach ($value as $k => $v) {
                         if($tablename!=="staff_roles"){
-                            /*echo "<br>+++v<br>";
-                            var_dump(get_object_vars($v));
-                            echo "<br>+++k<br>";
-                            var_dump(array_values($value));
-                            echo "<br>+++<br>";*/
                             foreach (array_values($value) as $k => $v){
                                 if(is_string($v)){
                                     $temp_v[$k] = $v;
@@ -391,8 +386,6 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                                     $temp_v[$k] = (array_values(get_object_vars($v)))[0];
                                 }
                             }
-                            //echo "***temp_v=";
-                            //var_dump(array_values($temp_v));
                         }else{
                             $temp=array();
                             foreach($value as $k => $v){
@@ -412,21 +405,12 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                     }
                     $this ->tablename=$tablename;
                     foreach($value as $k => $v) {
-                        echo "<br>***=>k=".print_r($k).";<br>";
-                        echo "<br>***=>v=".print_r($v).";<br>";
                         if(is_string($v)) {
                             $colname = $this->getColumnNameForKey($v);
                         }else{
                             $colname = $this->getColumnNameForKey(array_key_first(get_object_vars($v)));
                         }
-                        /*echo "<br>***=>tablename:".$tablename."<br>";
-                        echo "<br>***=>".var_dump($value);*/
-                        //echo "<br>***=>".var_dump($k);
-                        //echo "<br>***=>".var_dump(array_key_first(get_object_vars($v)));
-                        /*echo "<br>***=>colname:".$colname;
-                        echo "<br>****<br>";*/
-                        //echo "<br>fields=" . $fields;
-                        if(!stripos($fields,$colname)) {
+                         if(!stripos($fields,$colname)) {
                             if (strlen($fields)) {
                                 $fields .= ",";
                                 $values .= ",";
@@ -443,8 +427,6 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                     } else {
                         $values .= "'" . addslashes(substr($vlist, 0))."'";
                     }
-                    //echo "<br>fields=" . $fields;
-                    //echo "<br>values=" . $values;
                 }
 			}else if(is_object($value)){
  				echo "need to handle _object_ subdata for values\n";
@@ -471,7 +453,6 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
 		if(strlen($fields)){
 			$sql = "INSERT INTO `" . addslashes($this->tablename) . "` "
 				 . "(" . $fields . ") VALUES (" . $values . ")";
-			//var_dump($sql);
         }else{
             $sql = "SELECT 0 LIMIT 0";
         }
