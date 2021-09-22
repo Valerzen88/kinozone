@@ -94,7 +94,7 @@ mysqli_close($conn);
 							  <p><?php echo $film_info[0][26]; ?></p>
                               <p class="mb-0">
                               <?php if($film_info[0][11]>0||$film_info[0][13]>0){ echo "<i class=\"fas fa-star\"></i>";
-                                if($film_info[0][11]>0) {echo "Рейтинг: ".$film_info[0][11];}elseif($film_info[0][13]>0){echo "Рейтинг: ".$film_info[0][13];}}
+                                if($film_info[0][11]>0) {echo " Рейтинг: ".$film_info[0][11];}elseif($film_info[0][13]>0){echo " Рейтинг: ".$film_info[0][13];}}
 							  $age="";
 							  if ($film_info[0][32]=="age0") {
 								  $age="0";
@@ -133,7 +133,7 @@ mysqli_close($conn);
                               <?php if($film_info[0][5]!=null){
                                   echo "<h6>Оригинальное название:</h6><p>".$film_info[0][5]."</p>";
                               } ?>
-                              <h6>Тэги:</h6>
+                              <!--<h6>Тэги:</h6>
                               <p class="tags mb-0">
                                  <span><a href="#">Тэг1</a></span>
                                  <span><a href="#">Тэг2</a></span>
@@ -141,7 +141,7 @@ mysqli_close($conn);
                                  <span><a href="#">Тэг4</a></span>
                                  <span><a href="#">Тэг5</a></span>
                                  <span><a href="#">Тэг6</a></span>
-                              </p>
+                              </p>-->
                            </div>
                         </div>
                      </div>

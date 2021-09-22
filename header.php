@@ -55,7 +55,7 @@ if (isset($_POST['searchvalue'])) {
     }
 }
 if(isset($_GET['year'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where year=".$_GET['year']." and nameRu IS NOT NULL";
+    $sql="SELECT count(kinopoiskId) FROM films where year=".$_GET['year']." and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL";
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -70,7 +70,8 @@ if(isset($_GET['year'])) {
         $page = $_GET['p'];
     }
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where nameRu IS NOT NULL and year=".$_GET['year']." order by kinopoiskId desc LIMIT " . $page_first_result . ',' . $results_per_page;
+    $sql="SELECT * FROM films where filmLength is not null and ratingAwait is null and nameRu IS NOT NULL and year=".$_GET['year'].
+	" order by kinopoiskId desc, ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {

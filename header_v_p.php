@@ -200,7 +200,7 @@
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="categories.html" role="navigation" data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="true">
-                <i class="fas fa-fw fa-list-alt"></i>
+                <i class="fas fa-fw fa-tv"></i>
                 <span>Телевидение</span>
             </a>
             <div class="dropdown-menu">
