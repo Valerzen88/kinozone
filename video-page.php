@@ -128,6 +128,8 @@ mysqli_close($conn);
                               <p><?php echo $film_info[0][25]; ?></p>
                               <?php if(sizeof($staff)>0){ echo "<h6>В ролях:</h6>
                               <p>".implode(", ",$staff)."</p>";}?>
+							  <h6>Страна:</h6>
+                              <p><?php echo $film_info[0][33]; ?></p>
                               <h6>Жанры:</h6>
                               <p><?php echo str_ireplace(",",", ",$film_info[0][34]); ?></p>
                               <?php if($film_info[0][5]!=null){

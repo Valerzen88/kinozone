@@ -39,23 +39,37 @@ if (isset($_POST['searchvalue'])) {
     if ($result) {
         if (mysqli_num_rows($result) == 1) {
             while ($row = mysqli_fetch_row($result)) {
-                $new_uri = str_replace("index.php", "video-page.php?filmId=" . $row[0], $_SERVER["REQUEST_URI"]);
-            }
+				if(strstr($_SERVER["REQUEST_URI"],"index.php")){
+					$new_uri = str_replace("index.php", "videos_list.php?filmId=" . $row[0], $_SERVER["REQUEST_URI"]);
+				}else if (strstr($_SERVER["REQUEST_URI"],"videos_list.php")) {
+					$new_uri = str_replace("videos_list.php", "videos_list.php?s=" . $row[0], $_SERVER["REQUEST_URI"]);            
+				}
+            }			
             mysqli_free_result($result);
             mysqli_close($conn);
             header('Location: ' . $new_uri);
             exit();
         } else if (mysqli_num_rows($result) > 1) {
-            $new_uri = str_replace("index.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);
+			if(strstr($_SERVER["REQUEST_URI"],"index.php")){
+				$new_uri = str_replace("index.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);
+			}else if (strstr($_SERVER["REQUEST_URI"],"videos_list.php")) {
+				$new_uri = str_replace("videos_list.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);            
+			}
             mysqli_free_result($result);
             mysqli_close($conn);
             header('Location: ' . $new_uri);
             exit();
-        }
-    }
+        }else{
+			header('Location: /');
+            exit();
+		}
+    }else{
+		header('Location: /');
+        exit();
+	}
 }
 if(isset($_GET['year'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where year=".$_GET['year']." and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL";
+    $sql="SELECT film_amount FROM years_count where year=".$_GET['year'];
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -71,7 +85,7 @@ if(isset($_GET['year'])) {
     }
     $page_first_result = ($page-1) * $results_per_page;
     $sql="SELECT * FROM films where filmLength is not null and ratingAwait is null and nameRu IS NOT NULL and year=".$_GET['year'].
-	" order by kinopoiskId desc, ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
+	" order by ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -81,8 +95,8 @@ if(isset($_GET['year'])) {
     }
     mysqli_close($conn);
 }else if(isset($_GET['s'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where nameRu=\"".Switcher::toCyrillic($_GET["s"])."\" 
-	OR nameOriginal=\"".Switcher::fromCyrillic($_GET["s"])."\" OR kinopoiskId=\"".$_GET["s"]
+    $sql="SELECT count(kinopoiskId) FROM films where nameRu like \"%".Switcher::toCyrillic($_GET["s"])."%\" 
+	OR nameOriginal like \"%".Switcher::fromCyrillic($_GET["s"])."%\" OR kinopoiskId=\"".$_GET["s"]
         ."\" or year like \"%".$_GET["s"]."%\"";
     $result=mysqli_query($conn,$sql);
     if($result) {
@@ -96,11 +110,11 @@ if(isset($_GET['year'])) {
         $page = 1;
     } else {
         $page = $_GET['p'];
-    }
+    }  
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where nameRu=\"".Switcher::toCyrillic($_GET["s"])."\" 
-	OR nameOriginal=\"".Switcher::fromCyrillic($_GET["s"])."\" OR kinopoiskId=\"".$_GET["s"]
-        ."\" or year like \"%".$_GET["s"]."%\" order by kinopoiskId desc LIMIT " . $page_first_result . ',' . $results_per_page;
+    $sql="SELECT * FROM films where nameRu like \"%".Switcher::toCyrillic($_GET["s"])."%\" 
+	OR nameOriginal like \"%".Switcher::fromCyrillic($_GET["s"])."%\" OR kinopoiskId=\"".$_GET["s"]
+        ."\" or year like \"%".$_GET["s"]."%\" order by year desc,ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -110,7 +124,7 @@ if(isset($_GET['year'])) {
     }
     mysqli_close($conn);
 }else if(isset($_GET['genre'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where genre like \"%".$_GET["genre"]."%\" and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL";
+    $sql="SELECT films_amount FROM genre where genre_one='".$_GET["genre"]."'";
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -125,7 +139,7 @@ if(isset($_GET['year'])) {
         $page = $_GET['p'];
     }
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where nameRu is not null and genre like \"%".$_GET["genre"]."%\" and filmLength is not null and ratingAwait is null order by year desc LIMIT " . $page_first_result . ',' . $results_per_page;
+    $sql="SELECT * FROM films where nameRu is not null and year<2022 and genre like \"%".$_GET["genre"]."%\" and filmLength is not null and ratingAwait is null order by ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {

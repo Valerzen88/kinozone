@@ -51,12 +51,44 @@ include_once("header.php");
                                   <li class="page-item<?php echo $prev_disabled;?>">
                                       <a class="page-link" href="videos_list.php?p=<?php echo $page-1; ?>" tabindex="-1"><i class="fas fa-angle-left"></i></a>
                                   </li>
-                                  <?php for($page_ = 1; $page_<= intval($number_of_pages); $page_++) {
+								  <?php
+								    $pageDisplayToLeft = 3;
+									$pageDisplayToRight = 7;
+									$pagesTotal = $number_of_pages;
+									$currentPage = $page;
+
+									echo '<First>';
+
+									if(($currentPage - $pageDisplayToLeft) > 1) {
+										echo ' ... ';
+									}
+
+									$pageDisplay = max(1, $currentPage - $pageDisplayToLeft);
+									while($pageDisplay < $currentPage) {
+										echo $pageDisplay . ' ';
+										$pageDisplay++;
+									}
+									echo '[' . $currentPage . '] ';
+
+									$pageDisplay = min($pagesTotal, $currentPage + 1);
+									while($pageDisplay <= min($currentPage + $pageDisplayToRight, $pagesTotal)) {
+										echo $pageDisplay . ' ';
+										$pageDisplay++;
+									}
+
+
+									if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
+										echo ' ... ';
+									}
+
+									echo '<Last>';
+								  ?>
+                                  <?php /*for($page_ = 1; $page_<= intval($number_of_pages); $page_++) {
                                       $active="";$link_disabled="";if($page==$page_) {$active=" active";$link_disabled=" disabled";}
                                       $params="";if(isset($_GET["s"])) {$params="s=".$_GET["s"];}elseif (isset($_GET["year"])) {$params="year=".$_GET["year"];}
                                       echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
-                                      href="videos_list.php?'.$params.'&p=' . $page_ . '">' . $page_ . ' </a></li>';
-                                  }?>
+                                      href="videos_list.php?'.$params.'&p=' . $page_ . '">' . $page_ . ' </a></li>';								 
+                                  }*/?>
                                   <?php $next_disabled="";if(intval($page)==intval($number_of_pages)) {$next_disabled=" disabled";}?>
                                   <li class="page-item<?php echo $next_disabled;?>">
                                       <a class="page-link" href="videos_list.php?p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
