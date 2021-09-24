@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description"
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
-    <meta name="keywords" content="смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно"/>
+    <meta name="keywords" content="смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки"/>
     <meta name="author" content="KINOZONE.CO">
     <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>
     <!-- Favicon Icon -->
@@ -27,6 +27,8 @@
     <!-- Owl Carousel -->
     <link rel="stylesheet" href="vendor/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="vendor/owl-carousel/owl.theme.css">
+	<script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+	<script type="text/javascript" src="//www.gstatic.com/eureka/clank/cast_sender.js"></script>
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
@@ -220,7 +222,7 @@
                                 <input type="text" name="searchvalue" placeholder="Поиск по сайту..."
                                        class="form-control">
                                 <div class="input-group-append">
-                                    <button type="submit" class="btn btn-dark"><i class="fas fa-search"></i></button>
+                                    <button type="submit" onclick="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-dark"><i class="fas fa-search"></i></button>
                                 </div>
                             </div>
                         </form>

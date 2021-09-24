@@ -9,7 +9,7 @@ $films_amount=array();
 $results_per_page = 24;
 $total_count=0;
 if(isset($conn)) {
-    $sql = "SELECT * FROM kinozone.films WHERE year=2021 and filmLength>10 and ratingKinopoisk>'6.0' order by ratingKinopoiskVoteCount desc limit 20";
+    $sql = "SELECT * FROM kinozone.top_20";
     $result = mysqli_query($conn, $sql);
     if ($result) {
         if (mysqli_num_rows($result) > 1) {
@@ -160,7 +160,7 @@ if(isset($_GET['year'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description"
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
-    <meta name="keywords" content="смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно"/>
+    <meta name="keywords" content="смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки"/>
     <meta name="author" content="KINOZONE.CO">
     <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>
     <!-- Favicon Icon -->
@@ -377,7 +377,7 @@ if(isset($_GET['year'])) {
                                 <input type="text" name="searchvalue" placeholder="Поиск по сайту..."
                                        class="form-control">
                                 <div class="input-group-append">
-                                    <button type="submit" class="btn btn-dark"><i class="fas fa-search"></i></button>
+                                    <button type="submit" onclick="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-dark"><i class="fas fa-search"></i></button>
                                 </div>
                             </div>
                         </form>

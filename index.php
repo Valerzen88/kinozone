@@ -70,7 +70,7 @@ include_once("header.php");
                                            </div>
                                             <div class=\"channels-card-body\">                                  
                                              <div class=\"channels-view\">
-                                             " . $v[34] . "
+                                             " . str_ireplace(",",", ",$v[34]) . "
                                             </div>
                                             </div>
                                             </div>

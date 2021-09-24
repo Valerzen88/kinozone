@@ -15,7 +15,11 @@ include_once("header.php");
                                  <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
                               </div>
                            </div>
-                           <h6>Результаты поиска (найдено: <?php echo $total_count;?>)</h6>
+                           <h6>Результаты поиска <?php
+								if(isset($_GET["year"])) {echo " по ".$_GET["year"]." году ";}
+								elseif(isset($_GET["genre"])) {echo " по жанру <b>\"".$_GET["genre"]."\"</b> ";}
+						   ?>
+						   (найдено: <?php echo $total_count;?>)</h6>
                         </div>
                      </div>
                       <?php
@@ -35,8 +39,8 @@ include_once("header.php");
                                        echo "</a></button></div>
                                        </div>
                                         <div class=\"channels-card-body\">                                  
-                                         <div class=\"channels-view\">
-                                         " . $v[34] . "
+                                         <div class=\"channels-view\" style=' word-wrap:break-word;'>
+                                         " . str_ireplace(",",", ",$v[34]) . "
                                         </div>
                                         </div>
                                         </div>
@@ -45,159 +49,74 @@ include_once("header.php");
                         }
                       ?>
                       <div class="col-md-12">
-                          <nav aria-label="Page navigation example">
-                              <ul class="pagination justify-content-center pagination-sm mb-4">
-                                  <?php $prev_disabled="";if($page==1) {$prev_disabled=" disabled";}?>
-                                  <li class="page-item<?php echo $prev_disabled;?>">
-                                      <a class="page-link" href="videos_list.php?p=<?php echo $page-1; ?>" tabindex="-1"><i class="fas fa-angle-left"></i></a>
-                                  </li>
+                          <nav>
+                              <ul class="pagination justify-content-center pagination-sm mb-4">                                
 								  <?php
+								  if(isset($number_of_pages)&&$number_of_pages>0){
 								    $pageDisplayToLeft = 3;
 									$pageDisplayToRight = 7;
 									$pagesTotal = $number_of_pages;
 									$currentPage = $page;
 
-									echo '<First>';
-
+									$prev_disabled="";if($page==1) {$prev_disabled=" disabled";}
+									$params="";if(isset($_GET["s"])) {$params="s=".$_GET["s"];}
+									elseif(isset($_GET["year"])) {$params="year=".$_GET["year"];}
+									elseif(isset($_GET["genre"])) {$params="genre=".$_GET["genre"];}?>
+									  <li class="page-item<?php echo $prev_disabled;?>">
+										  <a class="page-link" href="videos_list.php?<?php echo $params;?>&p=<?php echo $page-1; ?>" tabindex="-1"><i class="fas fa-angle-left"></i></a>
+									  </li>
+									<?php
 									if(($currentPage - $pageDisplayToLeft) > 1) {
 										echo ' ... ';
 									}
 
+									
 									$pageDisplay = max(1, $currentPage - $pageDisplayToLeft);
 									while($pageDisplay < $currentPage) {
-										echo $pageDisplay . ' ';
+										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
+										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
+                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . ' </a></li>';
 										$pageDisplay++;
-									}
-									echo '[' . $currentPage . '] ';
+									}									
+									echo '<li class="page-item active"><a class="page-link disabled" onclick="return false;" 
+                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . ' </a></li>';
 
 									$pageDisplay = min($pagesTotal, $currentPage + 1);
 									while($pageDisplay <= min($currentPage + $pageDisplayToRight, $pagesTotal)) {
-										echo $pageDisplay . ' ';
+										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
+										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
+                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . ' </a></li>';
 										$pageDisplay++;
 									}
 
 
 									if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
-										echo ' ... ';
+										echo '<li class="page-item"><a class="page-link disabled"> ... </a></li>';
+									}
+									if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
+										echo '<li class="page-item'.$active.'"><a class="page-link" 
+                                      href="videos_list.php?'.$params.'&p=' . $pagesTotal . '">' . $pagesTotal . ' </a></li>';
 									}
 
-									echo '<Last>';
-								  ?>
+									$next_disabled="";if(intval($page)==intval($number_of_pages)) {$next_disabled=" disabled";}?>
+                                  <li class="page-item<?php echo $next_disabled;?>">
+                                      <a class="page-link" href="videos_list.php?<?php echo $params;?>&p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
+                                  </li>
+								  
                                   <?php /*for($page_ = 1; $page_<= intval($number_of_pages); $page_++) {
                                       $active="";$link_disabled="";if($page==$page_) {$active=" active";$link_disabled=" disabled";}
                                       $params="";if(isset($_GET["s"])) {$params="s=".$_GET["s"];}elseif (isset($_GET["year"])) {$params="year=".$_GET["year"];}
                                       echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
                                       href="videos_list.php?'.$params.'&p=' . $page_ . '">' . $page_ . ' </a></li>';								 
                                   }*/?>
-                                  <?php $next_disabled="";if(intval($page)==intval($number_of_pages)) {$next_disabled=" disabled";}?>
-                                  <li class="page-item<?php echo $next_disabled;?>">
-                                      <a class="page-link" href="videos_list.php?p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
-                                  </li>
+								  <?php } ?>
                               </ul>
                           </nav>
                           <div/>
                       </div>
                   </div>
                <hr>
-               <div class="video-block section-padding">
-                  <div class="row">
-                     <div class="col-md-12">
-                        <div class="main-title">
-                           <div class="btn-group float-right right-action">
-                              <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Sort by <i class="fa fa-caret-down" aria-hidden="true"></i>
-                              </a>
-                              <div class="dropdown-menu dropdown-menu-right">
-                                 <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
-                                 <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
-                                 <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
-                              </div>
-                           </div>
-                           <h6>Featured Videos</h6>
-                        </div>
-                     </div>
-                     <div class="col-xl-3 col-sm-6 mb-3">
-                        <div class="video-card">
-                           <div class="video-card-image">
-                              <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
-                              <a href="#"><img class="img-fluid" src="img/v5.png" alt=""></a>
-                              <div class="time">3:50</div>
-                           </div>
-                           <div class="video-card-body">
-                              <div class="video-title">
-                                 <a href="#">There are many variations of passages of Lorem</a>
-                              </div>
-                              <div class="video-page text-success">
-                                 Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
-                              </div>
-                              <div class="video-view">
-                                 1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-xl-3 col-sm-6 mb-3">
-                        <div class="video-card">
-                           <div class="video-card-image">
-                              <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
-                              <a href="#"><img class="img-fluid" src="img/v6.png" alt=""></a>
-                              <div class="time">3:50</div>
-                           </div>
-                           <div class="video-card-body">
-                              <div class="video-title">
-                                 <a href="#">There are many variations of passages of Lorem</a>
-                              </div>
-                              <div class="video-page text-danger">
-                                 Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Unverified"><i class="fas fa-frown text-danger"></i></a>
-                              </div>
-                              <div class="video-view">
-                                 1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-xl-3 col-sm-6 mb-3">
-                        <div class="video-card">
-                           <div class="video-card-image">
-                              <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
-                              <a href="#"><img class="img-fluid" src="img/v7.png" alt=""></a>
-                              <div class="time">3:50</div>
-                           </div>
-                           <div class="video-card-body">
-                              <div class="video-title">
-                                 <a href="#">There are many variations of passages of Lorem</a>
-                              </div>
-                              <div class="video-page text-success">
-                                 Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
-                              </div>
-                              <div class="video-view">
-                                 1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-xl-3 col-sm-6 mb-3">
-                        <div class="video-card">
-                           <div class="video-card-image">
-                              <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
-                              <a href="#"><img class="img-fluid" src="img/v8.png" alt=""></a>
-                              <div class="time">3:50</div>
-                           </div>
-                           <div class="video-card-body">
-                              <div class="video-title">
-                                 <a href="#">There are many variations of passages of Lorem</a>
-                              </div>
-                              <div class="video-page text-success">
-                                 Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
-                              </div>
-                              <div class="video-view">
-                                 1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
+               
                 </div>
             </div>
         </div>
