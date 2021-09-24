@@ -1,8 +1,41 @@
-create table if not exists genre as select genre_one, count(1) as films_amount from (select nameRu, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
+drop table if exists genre; create table if not exists genre as select genre_one, count(1) as films_amount from (select nameRu, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
   from films join numbers on char_length(genre)-char_length(replace(genre, ',', ''))>=n-1) gernes_count
-where nameRu is not null
+where nameRu is not null 
 group by 1 order by 2 desc;
-create table if not exists countries as select country, count(1) as films_amount from (select country, nameRu, trim(substring_index(substring_index(country, ',', n), ',', -1)) as country_one
+select genre_one, count(1) as films_amount from (select nameRu, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
+  from films join numbers on char_length(genre)-char_length(replace(genre, ',', ''))>=n-1) gernes_count
+where nameRu is not null 
+group by 1 order by 2 desc;
+drop table if exists countries; create table if not exists countries as select country, count(1) as films_amount from (select country, nameRu, trim(substring_index(substring_index(country, ',', n), ',', -1)) as country_one
   from films join numbers on char_length(country)-char_length(replace(country, ',', ''))>=n-1) countries_count
-  where nameRu is not null
+  where nameRu is not null 
 group by 1 order by 2 desc;
+select country, count(1) as films_amount from (select country, nameRu, trim(substring_index(substring_index(country, ',', n), ',', -1)) as country_one
+  from films join numbers on char_length(country)-char_length(replace(country, ',', ''))>=n-1) countries_count
+  where nameRu is not null 
+group by 1 order by 2 desc;
+
+INSERT INTO years_count (year, film_amount) 
+VALUES 
+(2021,(SELECT count(kinopoiskId) FROM films where year=2021 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2020,(SELECT count(kinopoiskId) FROM films where year=2020 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2019,(SELECT count(kinopoiskId) FROM films where year=2019 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2018,(SELECT count(kinopoiskId) FROM films where year=2018 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2017,(SELECT count(kinopoiskId) FROM films where year=2017 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2016,(SELECT count(kinopoiskId) FROM films where year=2016 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2015,(SELECT count(kinopoiskId) FROM films where year=2015 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2014,(SELECT count(kinopoiskId) FROM films where year=2014 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2013,(SELECT count(kinopoiskId) FROM films where year=2013 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2012,(SELECT count(kinopoiskId) FROM films where year=2012 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2011,(SELECT count(kinopoiskId) FROM films where year=2011 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2010,(SELECT count(kinopoiskId) FROM films where year=2010 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2009,(SELECT count(kinopoiskId) FROM films where year=2009 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2008,(SELECT count(kinopoiskId) FROM films where year=2008 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2007,(SELECT count(kinopoiskId) FROM films where year=2007 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2006,(SELECT count(kinopoiskId) FROM films where year=2006 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2005,(SELECT count(kinopoiskId) FROM films where year=2005 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2004,(SELECT count(kinopoiskId) FROM films where year=2004 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2003,(SELECT count(kinopoiskId) FROM films where year=2003 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2002,(SELECT count(kinopoiskId) FROM films where year=2002 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2001,(SELECT count(kinopoiskId) FROM films where year=2001 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL)),
+(2000,(SELECT count(kinopoiskId) FROM films where year=2000 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL))
