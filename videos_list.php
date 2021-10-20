@@ -26,8 +26,17 @@ include_once("header.php");
                         foreach ($films_list as $k => $v) {
                             if($v[3]!==null) {
                                 echo "<div class=\"col-xl-3 col-sm-6 mb-3\">
-                                        <div class=\"channels-card\">
-                                        <div class=\"channels-card-image\">
+                                        <div class=\"channels-card\">";
+                                         if(stripos($v[34],"мультфильм")) {
+                                             echo "<div class=\"time\">Мультфильм</div>";
+                                         }elseif($v[30]=="FILM") {
+                                             echo "<div class=\"time\">Фильм</div>";
+                                          }elseif ($v[30]=="TV_SERIES") {
+                                             echo "<div class=\"time\">Сериал</div>";
+                                          }elseif ($v[30]=="MINI_SERIES") {
+                                             echo "<div class=\"time\">Мини-сериал</div>";
+                                         }
+                                        echo "<div class=\"channels-card-image\">                                      
                                         <a href=\"video-page.php?filmId=".$v[1]."\"><img class=\"img-fluid\" src=\"" . $v[7] . "\" alt=\"\"></a>
                                        <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=".$v[1]."'\"
                                        class=\"btn btn-outline-secondary btn-sm\">" . $v[3] . " (".$v[22].")";
@@ -59,56 +68,50 @@ include_once("header.php");
 									$currentPage = $page;
 
 									$prev_disabled="";if($page==1) {$prev_disabled=" disabled";}
-									$params="";if(isset($_GET["s"])) {$params="s=".$_GET["s"];}
+									$params="";if(isset($_GET["q"])) {$params="q=".$_GET["q"];}
 									elseif(isset($_GET["year"])) {$params="year=".$_GET["year"];}
-									elseif(isset($_GET["genre"])) {$params="genre=".$_GET["genre"];}?>
+									elseif(isset($_GET["genre"])) {$params="genre=".$_GET["genre"];}
+									elseif(isset($_GET["genre_serials"])) {$params="genre_serials=".$_GET["genre_serials"];}?>
 									  <li class="page-item<?php echo $prev_disabled;?>">
 										  <a class="page-link" href="videos_list.php?<?php echo $params;?>&p=<?php echo $page-1; ?>" tabindex="-1"><i class="fas fa-angle-left"></i></a>
 									  </li>
 									<?php
 									if(($currentPage - $pageDisplayToLeft) > 1) {
-										echo ' ... ';
+										echo '<li class="page-item"><a class="page-link" href="videos_list.php?'.$params.'&p=1">1</a></li>';
+										echo '<li class="page-item"><a class="page-link disabled"> ... </a></li>';
 									}
 
-									
 									$pageDisplay = max(1, $currentPage - $pageDisplayToLeft);
 									while($pageDisplay < $currentPage) {
 										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
 										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
-                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . ' </a></li>';
+                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 										$pageDisplay++;
 									}									
 									echo '<li class="page-item active"><a class="page-link disabled" onclick="return false;" 
-                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . ' </a></li>';
+                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 
 									$pageDisplay = min($pagesTotal, $currentPage + 1);
-									while($pageDisplay <= min($currentPage + $pageDisplayToRight, $pagesTotal)) {
+									while($pageDisplay < min($currentPage + $pageDisplayToRight, $pagesTotal)) {
 										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
 										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
-                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . ' </a></li>';
+                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 										$pageDisplay++;
 									}
-
 
 									if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
 										echo '<li class="page-item"><a class="page-link disabled"> ... </a></li>';
 									}
 									if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
 										echo '<li class="page-item'.$active.'"><a class="page-link" 
-                                      href="videos_list.php?'.$params.'&p=' . $pagesTotal . '">' . $pagesTotal . ' </a></li>';
+                                      href="videos_list.php?'.$params.'&p=' . $pagesTotal . '">' . $pagesTotal . '</a></li>';
 									}
 
 									$next_disabled="";if(intval($page)==intval($number_of_pages)) {$next_disabled=" disabled";}?>
                                   <li class="page-item<?php echo $next_disabled;?>">
                                       <a class="page-link" href="videos_list.php?<?php echo $params;?>&p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
                                   </li>
-								  
-                                  <?php /*for($page_ = 1; $page_<= intval($number_of_pages); $page_++) {
-                                      $active="";$link_disabled="";if($page==$page_) {$active=" active";$link_disabled=" disabled";}
-                                      $params="";if(isset($_GET["s"])) {$params="s=".$_GET["s"];}elseif (isset($_GET["year"])) {$params="year=".$_GET["year"];}
-                                      echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
-                                      href="videos_list.php?'.$params.'&p=' . $page_ . '">' . $page_ . ' </a></li>';								 
-                                  }*/?>
+
 								  <?php } ?>
                               </ul>
                           </nav>

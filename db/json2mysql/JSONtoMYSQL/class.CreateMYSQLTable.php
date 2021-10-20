@@ -93,7 +93,6 @@ class CreateMYSQLTable extends ExistingMYSQLTable{
 			 . "  PRIMARY KEY  (`" . $this->primary . "`)"
 			 . ") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 
-        //var_dump($sql);
 		$this->mysql->query($sql);
 	
 		$issues = [];

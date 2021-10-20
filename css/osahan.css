@@ -231,7 +231,6 @@ Version: 1.0
     }
      .sidebar .nav-item .nav-link {
          display: block;
-         width: 100%;
          text-align: left;
          padding: 1rem;
          width: 225px;
@@ -412,7 +411,7 @@ Version: 1.0
     width: 607px !important;
 }
  .osahan-navbar-search {
-     margin-right: 84px !important;
+     margin-right: auto !important;
 }
  .osahan-navbar-search .btn {
      background: #303030 none repeat scroll 0 0;
@@ -673,7 +672,7 @@ Version: 1.0
      background: #1c1c1c none repeat scroll 0 0;
      border-radius: 2px;
      margin-bottom: 1rem;
-     padding: 27px 10px;
+     padding: 10px 10px;
      text-align: center;
      width: 100%;
 }

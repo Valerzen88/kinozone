@@ -4,10 +4,27 @@ include("switcher.php");
 include("queries.php");
 $film_info = array();
 $top_20_films = array();
+$top_20_serials = array();
 $films_list=array();
 $films_amount=array();
+$serials_amount=array();
 $results_per_page = 24;
 $total_count=0;
+function getIPAddress() {
+    //whether ip is from the share internet
+    if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    }
+    //whether ip is from the proxy
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+//whether ip is from the remote address
+    else{
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    return $ip;
+}
 if(isset($conn)) {
     $sql = "SELECT * FROM kinozone.top_20";
     $result = mysqli_query($conn, $sql);
@@ -15,6 +32,16 @@ if(isset($conn)) {
         if (mysqli_num_rows($result) > 1) {
             while ($row = mysqli_fetch_row($result)) {
                 array_push($top_20_films, $row);
+            }
+            mysqli_free_result($result);
+        }
+    }
+	$sql = "SELECT * FROM kinozone.top_20_serials";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        if (mysqli_num_rows($result) > 1) {
+            while ($row = mysqli_fetch_row($result)) {
+                array_push($top_20_serials, $row);
             }
             mysqli_free_result($result);
         }
@@ -30,20 +57,55 @@ if(isset($conn)) {
             mysqli_free_result($result);
         }
     }
+	$sql = "SELECT * FROM years_count where keyword='all_serials'";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_row($result)) {
+                $serials_amount[$row[2]]=$row[1];
+            }
+            mysqli_free_result($result);
+        }
+    }
+	$genre_serials=array();
+	$sql = "SELECT * FROM kinozone.genre_serials where genre_one<>''";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        if (mysqli_num_rows($result) > 1) {
+            while ($row = mysqli_fetch_row($result)) {
+                array_push($genre_serials, $row);
+            }
+            mysqli_free_result($result);
+        }
+    }
 }
-if (isset($_POST['searchvalue'])) {
-    $sql = "SELECT kinopoiskId FROM films where nameRu=\"" . Switcher::toCyrillic($_POST["searchvalue"]) . "\" 
-	OR nameOriginal=\"" . Switcher::fromCyrillic($_POST["searchvalue"]) . "\" OR kinopoiskId=\"" . $_POST["searchvalue"]
-        . "\" or year like \"%" . $_POST["searchvalue"] . "%\" order by kinopoiskId desc";
+if (isset($_POST['q'])) {
+    if(strlen($_POST['q'])==0){
+        $sql = "SELECT kinopoiskId FROM films where nameRu is not null and year<2022 order by year desc,ratingKinopoiskVoteCount desc limit 1000";
+    } else {
+        $numeric_search="";
+        if(is_numeric($_POST['q'])) {
+            $numeric_search = " OR kinopoiskId=\"" . $_POST["q"] . "\" OR year like \"%" . $_POST["q"] . "%\" ";
+        }
+        $sql = "SELECT kinopoiskId FROM films where nameRu like \"%" . Switcher::toCyrillic($_POST["q"]) . "%\" 
+	OR nameOriginal like \"%" . Switcher::fromCyrillic($_POST["q"]) . "%\"".$numeric_search."order by kinopoiskId desc limit 10";
+    }
+    /*
+    $ip = getIPAddress();
+    $log = date("d.m.Y H:i:s").":: User with IP-Address=".$ip." request search for '".$_POST['q']."'".PHP_EOL.
+        date("d.m.Y H:i:s").":: sql=".$sql.";".PHP_EOL;
+    file_put_contents('log_'.date("j.n.Y").'.log', $log, FILE_APPEND);*/
     $result = mysqli_query($conn, $sql);
     if ($result) {
         if (mysqli_num_rows($result) == 1) {
             while ($row = mysqli_fetch_row($result)) {
 				if(strstr($_SERVER["REQUEST_URI"],"index.php")){
-					$new_uri = str_replace("index.php", "videos_list.php?filmId=" . $row[0], $_SERVER["REQUEST_URI"]);
+					$new_uri = str_replace("index.php", "video-page.php?filmId=" . $row[0], $_SERVER["REQUEST_URI"]);
 				}else if (strstr($_SERVER["REQUEST_URI"],"videos_list.php")) {
-					$new_uri = str_replace("videos_list.php", "videos_list.php?s=" . $row[0], $_SERVER["REQUEST_URI"]);            
-				}
+					$new_uri = str_replace("videos_list.php", "videos_list.php?q=" . $row[0], $_SERVER["REQUEST_URI"]);
+				}else if (strstr($_SERVER["REQUEST_URI"],"top.php")) {
+                    $new_uri = str_replace("top.php", "videos_list.php?q=" . $row[0], $_SERVER["REQUEST_URI"]);
+                }
             }			
             mysqli_free_result($result);
             mysqli_close($conn);
@@ -51,10 +113,12 @@ if (isset($_POST['searchvalue'])) {
             exit();
         } else if (mysqli_num_rows($result) > 1) {
 			if(strstr($_SERVER["REQUEST_URI"],"index.php")){
-				$new_uri = str_replace("index.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);
+				$new_uri = str_replace("index.php", "videos_list.php?q=" . $_POST["q"], $_SERVER["REQUEST_URI"]);
 			}else if (strstr($_SERVER["REQUEST_URI"],"videos_list.php")) {
-				$new_uri = str_replace("videos_list.php", "videos_list.php?s=" . $_POST["searchvalue"], $_SERVER["REQUEST_URI"]);            
-			}
+				$new_uri = str_replace("videos_list.php", "videos_list.php?q=" . $_POST["q"], $_SERVER["REQUEST_URI"]);
+			}else if (strstr($_SERVER["REQUEST_URI"],"top.php")) {
+                $new_uri = str_replace("top.php", "videos_list.php?q=" . $_POST["q"], $_SERVER["REQUEST_URI"]);
+            }
             mysqli_free_result($result);
             mysqli_close($conn);
             header('Location: ' . $new_uri);
@@ -85,7 +149,7 @@ if(isset($_GET['year'])) {
     }
     $page_first_result = ($page-1) * $results_per_page;
     $sql="SELECT * FROM films where filmLength is not null and ratingAwait is null and nameRu IS NOT NULL and year=".$_GET['year'].
-	" order by ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
+	" order by year desc, ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -94,10 +158,17 @@ if(isset($_GET['year'])) {
         mysqli_free_result($result);
     }
     mysqli_close($conn);
-}else if(isset($_GET['s'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where nameRu like \"%".Switcher::toCyrillic($_GET["s"])."%\" 
-	OR nameOriginal like \"%".Switcher::fromCyrillic($_GET["s"])."%\" OR kinopoiskId=\"".$_GET["s"]
-        ."\" or year like \"%".$_GET["s"]."%\"";
+}else if(isset($_GET['q'])) {
+    if(strlen($_GET['q'])==0){
+        $sql = "SELECT count(kinopoiskId) FROM films where nameRu is not null and year<2022 order by year desc,ratingKinopoiskVoteCount desc";
+    } else {
+        $numeric_search="";
+        if(is_numeric($_GET['q'])) {
+            $numeric_search = " OR kinopoiskId=\"" . $_GET["q"] . "\" OR year like \"%" . $_GET["q"] . "%\" ";
+        }
+        $sql = "SELECT count(kinopoiskId) FROM films where nameRu like \"%" . Switcher::toCyrillic($_GET["q"]) . "%\" 
+	OR nameOriginal like \"%" . Switcher::fromCyrillic($_GET["q"]) . "%\"".$numeric_search."order by kinopoiskId desc";
+    }
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -112,9 +183,17 @@ if(isset($_GET['year'])) {
         $page = $_GET['p'];
     }  
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where nameRu like \"%".Switcher::toCyrillic($_GET["s"])."%\" 
-	OR nameOriginal like \"%".Switcher::fromCyrillic($_GET["s"])."%\" OR kinopoiskId=\"".$_GET["s"]
-        ."\" or year like \"%".$_GET["s"]."%\" order by year desc,ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
+    if(strlen($_GET['q'])==0){
+        $sql = "SELECT * FROM films where nameRu is not null and year<2022 order by year desc,ratingKinopoiskVoteCount desc limit " . $page_first_result . ',' . $results_per_page;
+    } else {
+        $numeric_search="";
+        if(is_numeric($_GET['q'])) {
+            $numeric_search = " OR kinopoiskId=\"" . $_GET["q"] . "\" OR year like \"%" . $_GET["q"] . "%\" ";
+        }
+        $sql = "SELECT * FROM films where nameRu like \"%" . Switcher::toCyrillic($_GET["q"]) . "%\" 
+	OR nameOriginal like \"%" . Switcher::fromCyrillic($_GET["q"]) . "%\"".$numeric_search."order by year desc,
+	ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
+    }
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -139,7 +218,33 @@ if(isset($_GET['year'])) {
         $page = $_GET['p'];
     }
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where nameRu is not null and year<2022 and genre like \"%".$_GET["genre"]."%\" and filmLength is not null and ratingAwait is null order by ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
+    $sql="SELECT * FROM films where nameRu is not null and year<2022 and genre like \"%".$_GET["genre"]."%\" and filmLength is 
+    not null and ratingAwait is null order by year desc, ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
+    $result=mysqli_query($conn,$sql);
+    if($result) {
+        while ($row = mysqli_fetch_row($result)) {
+            array_push($films_list,$row);
+        }
+        mysqli_free_result($result);
+    }
+    mysqli_close($conn);
+}else if(isset($_GET['genre_serials'])) {
+    $sql="SELECT films_amount FROM genre_serials where genre_one='".$_GET["genre_serials"]."'";
+    $result=mysqli_query($conn,$sql);
+    if($result) {
+        while ($row = mysqli_fetch_row($result)) {
+            $total_count=$row[0];
+        }
+        mysqli_free_result($result);
+    }
+    $number_of_pages = ceil ($total_count / $results_per_page);
+    if (!isset ($_GET['p']) ) {
+        $page = 1;
+    } else {
+        $page = $_GET['p'];
+    }
+    $page_first_result = ($page-1) * $results_per_page;
+    $sql="SELECT * FROM films where type=\"TV_SERIES\" and nameRu is not null and year<2022 and genre like \"%".$_GET["genre_serials"]."%\" and filmLength is not null and ratingAwait is null order by year desc, ratingKinopoiskVoteCount desc LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -151,17 +256,27 @@ if(isset($_GET['year'])) {
 } else {
     mysqli_close($conn);
 }
+$actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
+        "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
+    <meta name="my_id" content="541">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!" />
+    <?php if(stripos($actual_link,"video-page")!=false) {?>
+    <meta property="og:type" content="video.movie" />
+    <meta property="og:url" content="<?php echo $actual_link;_ ?>" />
+    <meta property="og:image" content="<?php echo $film_info[0][6]; ?>" />
+    <?php }?>
     <meta name="description"
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
-    <meta name="keywords" content="смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки"/>
+    <meta name="keywords" content="киного, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
     <meta name="author" content="KINOZONE.CO">
+    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(85895426, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
     <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>
     <!-- Favicon Icon -->
     <!-- Für Apple-Geräte -->
@@ -185,8 +300,7 @@ if(isset($_GET['year'])) {
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('.input-group input[type="text"]').on("keyup input", function () {
-                /* Get input value on change */
+            /*$('.input-group input[type="text"]').on("keyup input", function () {
                 var inputVal = $(this).val();
                 var resultDropdown = $(this).siblings(".result");
                 if (inputVal.length > 3) {
@@ -201,7 +315,7 @@ if(isset($_GET['year'])) {
                 } else if (inputVal.length === 0) {
                     resultDropdown.empty();
                 }
-            });
+            });*/
             // Set search input value on click of result item
             $(document).on("click", ".result p", function () {
                 $(this).parents(".input-group").find('input[type="text"]').val($(this).text());
@@ -209,9 +323,67 @@ if(isset($_GET['year'])) {
                 $(this).parent(".result").empty();
             });
         });
+		function generateUUID() { 
+			var d = new Date().getTime();//Timestamp
+			var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random() * 16;//random number between 0 and 16
+				if(d > 0){//Use timestamp until depleted
+					r = (d + r)%16 | 0;
+					d = Math.floor(d/16);
+				} else {//Use microseconds since page-load if supported
+					r = (d2 + r)%16 | 0;
+					d2 = Math.floor(d2/16);
+				}
+				return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+			});
+		}
+		var uuser_id=generateUUID();console.log("uuser_id="+uuser_id);
+		function setCookie(cname,cvalue,exdays) {
+		  const d = new Date();
+		  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+		  let expires = "expires=" + d.toGMTString();
+		  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+		}
+
+		function getCookie(cname) {
+		  let name = cname + "=";
+		  let decodedCookie = decodeURIComponent(document.cookie);
+		  let ca = decodedCookie.split(';');
+		  for(let i = 0; i < ca.length; i++) {
+			let c = ca[i];
+			while (c.charAt(0) == ' ') {
+			  c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+			  return c.substring(name.length, c.length);
+			}
+		  }
+		  return "";
+		}
+
+		function checkCookie() {
+		  let uuser_id = getCookie("uuser_id");
+		  if (uuser_id!=="") {
+			//alert("Welcome again " + user);
+		  } else {
+			setCookie("uuser_id", uuser_id, 30);
+		  }
+		}
+		function sendcount(uuser_id){
+		 $.ajax({
+				 type: "POST",
+				 url: "logging.php",
+				 data: {"uuser_id":uuser_id},
+				 async: true,
+				 success: function(data){ 
+					var obj = JSON.parse(data);
+					console.log(obj.msg);
+			  }})
+		}
     </script>
 </head>
-<body id="page-top">
+<body id="page-top" onload="checkCookie()">
 <nav class="navbar navbar-expand navbar-light bg-white static-top osahan-nav sticky-top">
     &nbsp;&nbsp;
     <button class="btn btn-link btn-sm text-secondary order-1 order-sm-0" id="sidebarToggle">
@@ -223,13 +395,13 @@ if(isset($_GET['year'])) {
     <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 osahan-navbar-search"
           method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <div class="input-group">
-            <input type="text" class="form-control" name="searchvalue"
+            <input type="text" class="form-control" name="q"
                    placeholder="Поиск по названию фильма или сериала...">
             <div class="icon-container" style="display: none;">
                 <i class="loader"></i>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-light" type="button">
+                <button class="btn btn-light" type="submit" formaction="<?php echo $_SERVER['PHP_SELF']; ?>">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -306,21 +478,39 @@ if(isset($_GET['year'])) {
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="videos_list.php?year=2021">
+            <a class="nav-link" href="top.php">
+                <i class="fas fa-star"></i>
+                <span>Топ фильмы</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="sendcount(uuser_id);" href="videos_list.php?year=2021">
                 <i class="fas fa-fw fa-film"></i>
-                <span>2021 (<?php echo $films_amount_2021[0][0]; ?>)</span>
+                <span>Фильмы 2021 (<?php echo $films_y_amount[2021]; ?>)</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="videos_list.php?year=2020">
                 <i class="fas fa-fw fa-film"></i>
-                <span>2020 (<?php echo $films_amount_2020[0][0]; ?>)</span>
+                <span>Фильмы 2020 (<?php echo $films_y_amount[2020]; ?>)</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="videos_list.php?year=2019">
                 <i class="fas fa-fw fa-film"></i>
-                <span>2019 (<?php echo $films_amount_2019[0][0]; ?>)</span>
+                <span>Фильмы 2019 (<?php echo $films_y_amount[2019]; ?>)</span>
+            </a>
+        </li>
+		<li class="nav-item">
+            <a class="nav-link" href="serials.php">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы (<?php echo $serials_amount['all_serials']; ?>)</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="tv.php">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Телевидение</span>
             </a>
         </li>
         <li class="nav-item">
@@ -330,40 +520,28 @@ if(isset($_GET['year'])) {
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="history-page.html">
+            <a class="nav-link" href="history.php">
                 <i class="fas fa-fw fa-history"></i>
                 <span>История</span>
             </a>
         </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
-               aria-expanded="false">
+        <li class="nav-item" style="display: none;">
+            <a class="nav-link dropdown-toggle" href="categories.html" data-toggle="dropdown"
+               role="navigation" aria-expanded="true">
                 <i class="fas fa-fw fa-list-alt"></i>
                 <span>Категории</span>
             </a>
             <div class="dropdown-menu">
                 <?php
-                foreach ($genres as $k => $v) {
+                /*foreach ($genres as $k => $v) {
                     echo "<a class=\"dropdown-item\"
                            href=\"videos_list.php?genre=" . $v[0]."\">
                            <img src=\"img/genres/".$v[0].".png\" height=\"16\" width=\"16\" title=\"
                            " . mb_strtoupper($v[0]) . "\" alt=\"" . mb_strtoupper($v[0]) . "\">
                            " . mb_strtoupper($v[0]) . "
                         </a>";
-                }
+                }*/
                 ?>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="categories.html" role="navigation" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="true">
-                <i class="fas fa-fw fa-tv"></i>
-                <span>Телевидение</span>
-            </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="1tv.php">1 канал</a>
-                <a class="dropdown-item" href="ctc.php">СТС</a>
-                <a class="dropdown-item" href="tnt.php">ТНТ</a>
             </div>
         </li>
     </ul>
@@ -374,10 +552,10 @@ if(isset($_GET['year'])) {
                     <div class="col-md-12">
                         <form class="mobile-search" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                             <div class="input-group">
-                                <input type="text" name="searchvalue" placeholder="Поиск по сайту..."
+                                <input type="text" name="q" placeholder="Поиск по сайту..."
                                        class="form-control">
                                 <div class="input-group-append">
-                                    <button type="submit" onclick="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-dark"><i class="fas fa-search"></i></button>
+                                    <button type="submit" formaction="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-dark"><i class="fas fa-search"></i></button>
                                 </div>
                             </div>
                         </form>

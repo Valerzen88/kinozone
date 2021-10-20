@@ -403,19 +403,33 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                     if($tablename!=="staff_roles") {
                         $vlist .= implode(",", array_values($temp_v));
                     }
-                    $this ->tablename=$tablename;
+                    $this->tablename=$tablename;
                     foreach($value as $k => $v) {
                         if(is_string($v)) {
                             $colname = $this->getColumnNameForKey($v);
                         }else{
                             $colname = $this->getColumnNameForKey(array_key_first(get_object_vars($v)));
                         }
+                        if($key==='spouses'&&!stripos($fields,$key)) {
+                            if (strlen($fields)) {
+                                $fields .= ",";
+                                $values .= ",";
+                            }
+                            $colname = $this->getColumnNameForKey($key);
+                            $fields .= "`" . $colname . "`";
+                        }
+                        /*if($key==='spouses') {
+                            var_dump($fields);
+                            echo "<br>+++<br>";
+                        }*/
                          if(!stripos($fields,$colname)) {
                             if (strlen($fields)) {
                                 $fields .= ",";
                                 $values .= ",";
                             }
-                            $fields .= "`" . $colname . "`";
+                            if($colname!=='') {
+                                $fields .= "`" . $colname . "`";
+                            }
                         }
                     }
                     if (is_bool($value)) {
@@ -425,7 +439,7 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                     if (is_null($value)) {
                         $values .= "NULL";
                     } else {
-                        $values .= "'" . addslashes(substr($vlist, 0))."'";
+                        $values .= "'" . addslashes($vlist)."'";
                     }
                 }
 			}else if(is_object($value)){
@@ -449,7 +463,16 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
 				}
 			}
 		}
-	
+	    if(strpos($values,"NULL'")){
+            $values = str_ireplace("NULL'","NULL,'",$values);
+        }
+        if(strpos($fields,"''")){
+            $fields = str_ireplace("''","','",$values);
+        }
+        if($key==='spouses') {
+            echo $fields;
+            echo $values;
+        }
 		if(strlen($fields)){
 			$sql = "INSERT INTO `" . addslashes($this->tablename) . "` "
 				 . "(" . $fields . ") VALUES (" . $values . ")";

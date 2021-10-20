@@ -4,10 +4,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <?php if(stripos($actual_link,"video-page")!=false) {?>
+        <meta property="og:type" content="video.movie" />
+        <meta property="og:url" content="<?php echo $actual_link; ?>" />
+        <meta property="og:image" content="<?php echo $film_info[0][6]; ?>" />
+    <?php }?>
     <meta name="description"
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
-    <meta name="keywords" content="смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки"/>
+    <meta name="keywords" content="киного, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
     <meta name="author" content="KINOZONE.CO">
+    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(85895426, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
     <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>
     <!-- Favicon Icon -->
     <!-- Für Apple-Geräte -->
@@ -27,14 +33,12 @@
     <!-- Owl Carousel -->
     <link rel="stylesheet" href="vendor/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="vendor/owl-carousel/owl.theme.css">
-	<script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-	<script type="text/javascript" src="//www.gstatic.com/eureka/clank/cast_sender.js"></script>
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('.input-group input[type="text"]').on("keyup input", function () {
-                /* Get input value on change */
+            /*$('.input-group input[type="text"]').on("keyup input", function () {
                 var inputVal = $(this).val();
                 var resultDropdown = $(this).siblings(".result");
                 if (inputVal.length > 3) {
@@ -49,14 +53,36 @@
                 } else if (inputVal.length === 0) {
                     resultDropdown.empty();
                 }
-            });
+            });*/
             // Set search input value on click of result item
             $(document).on("click", ".result p", function () {
                 $(this).parents(".input-group").find('input[type="text"]').val($(this).text());
                 $(this).parent(".result").val('');
                 $(this).parent(".result").empty();
             });
+
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ||
+                (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.platform))) {
+                $('#retro-comments').collapse();
+            }
         });
+        window['__onGCastApiAvailable'] = function(isAvailable) {
+            if (isAvailable) {
+                initializeCastApi();
+            }
+        };
+        initializeCastApi = function() {
+            cast.framework.CastContext.getInstance().setOptions({
+                receiverApplicationId: applicationId,
+                autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+            });
+            cast.framework.CastContext.getInstance().setOptions({
+                receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID
+            });
+        };
+        function openWhatsApp() {
+            //window.open('whatsapp://send?text='');
+        }
     </script>
 </head>
 <body id="page-top">
@@ -71,13 +97,13 @@
     <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 osahan-navbar-search"
           method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <div class="input-group">
-            <input type="text" class="form-control" name="searchvalue"
+            <input type="text" class="form-control" name="q"
                    placeholder="Поиск по названию фильма или сериала...">
             <div class="icon-container" style="display: none;">
                 <i class="loader"></i>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-light" type="submit">
+                <button class="btn btn-light" type="submit" formaction="<?php echo $_SERVER['PHP_SELF']; ?>">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -154,21 +180,39 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="top.php">
+                <i class="fas fa-star"></i>
+                <span>Топ фильмы</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="videos_list.php?year=2021">
                 <i class="fas fa-fw fa-film"></i>
-                <span>2021 (<?php echo $films_amount_2021[0][0]; ?>)</span>
+                <span>Фильмы 2021 (<?php echo $films_y_amount[2021]; ?>)</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="videos_list.php?year=2020">
                 <i class="fas fa-fw fa-film"></i>
-                <span>2020 (<?php echo $films_amount_2020[0][0]; ?>)</span>
+                <span>Фильмы 2020 (<?php echo $films_y_amount[2020]; ?>)</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="videos_list.php?year=2019">
                 <i class="fas fa-fw fa-film"></i>
-                <span>2019 (<?php echo $films_amount_2019[0][0]; ?>)</span>
+                <span>Фильмы 2019 (<?php echo $films_y_amount[2019]; ?>)</span>
+            </a>
+        </li>
+		<li class="nav-item">
+            <a class="nav-link" href="serials.php">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы (<?php echo $serials_amount['all_serials']; ?>)</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="tv.php">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Телевидение</span>
             </a>
         </li>
         <li class="nav-item">
@@ -178,37 +222,28 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="history-page.html">
+            <a class="nav-link" href="history.php">
                 <i class="fas fa-fw fa-history"></i>
                 <span>История</span>
             </a>
         </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
-               aria-expanded="false">
+        <li class="nav-item" style="display: none;">
+            <a class="nav-link dropdown-toggle" href="categories.html" data-toggle="dropdown"
+               role="navigation" aria-expanded="true">
                 <i class="fas fa-fw fa-list-alt"></i>
                 <span>Категории</span>
             </a>
             <div class="dropdown-menu">
                 <?php
-                foreach ($genres as $k => $v) {
+                /*foreach ($genres as $k => $v) {
                     echo "<a class=\"dropdown-item\"
-                           href=\"videos_list.php?genre=" . $v[0]."\">" . mb_strtoupper($v[0]) . "
+                           href=\"videos_list.php?genre=" . $v[0]."\">
+                           <img src=\"img/genres/".$v[0].".png\" height=\"16\" width=\"16\" title=\"
+                           " . mb_strtoupper($v[0]) . "\" alt=\"" . mb_strtoupper($v[0]) . "\">
+                           " . mb_strtoupper($v[0]) . "
                         </a>";
-                }
+                }*/
                 ?>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="categories.html" role="navigation" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="true">
-                <i class="fas fa-fw fa-tv"></i>
-                <span>Телевидение</span>
-            </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="1tv.php">1 канал</a>
-                <a class="dropdown-item" href="ctc.php">СТС</a>
-                <a class="dropdown-item" href="tnt.php">ТНТ</a>
             </div>
         </li>
     </ul>
@@ -219,10 +254,10 @@
                     <div class="col-md-12">
                         <form class="mobile-search" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                             <div class="input-group">
-                                <input type="text" name="searchvalue" placeholder="Поиск по сайту..."
+                                <input type="text" name="q" placeholder="Поиск по сайту..."
                                        class="form-control">
                                 <div class="input-group-append">
-                                    <button type="submit" onclick="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-dark"><i class="fas fa-search"></i></button>
+                                    <button type="submit" formaction="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-dark"><i class="fas fa-search"></i></button>
                                 </div>
                             </div>
                         </form>

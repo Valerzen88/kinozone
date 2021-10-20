@@ -59,7 +59,7 @@ class Switcher{
         * 
         * @return string
         */
-        public function toCyrillic( $string ){
+        public static function toCyrillic( $string ){
             return
                 strtr( $string, array_flip( self::$switch )  );
         }

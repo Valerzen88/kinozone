@@ -19,16 +19,16 @@
                 недавно на большие экраны. В данном случае прекрасной альтернативой является КиноКрад. Сегодня у
                 нас можно смотреть лучшие <strong>фильмы в хорошем качестве</strong>, не выходя из дома или
                 офиса, и все это удовольствие доступно без регистрации. Кинотека насчитывает огромное количество
-                онлайн фильмов всевозможных жанров, как <a href="https://kinozone.co/russkie/">российского</a>,
-                так и <a href="https://kinozone.co/zarubezhnye/">зарубежного</a> производства.</p>
+                онлайн фильмов всевозможных жанров, как <a href="#">российского</a>,
+                так и <a href="#">зарубежного</a> производства.</p>
             <p>Представленные у нас картины заставят грустить или радоваться, заглянуть в будущее или вспомнить
-                прошлое, погрузят Вас в мир <a href="https://kinozone.co/fantastika/">фантастики</a> и леденящих
+                прошлое, погрузят Вас в мир <a href="videos_list.php?genre=фантастика">фантастики</a> и леденящих
                 дух ужасов, а так же помогут узнать много нового и интересного.</p>
             <p>Хорошей идеей будет провести свободный вечер с любимым человеком за просмотром романтической
                 драмы. Собрать всех родственников можно на просмотр интересных семейных художественных <a
-                    href="/filmy-2021-novinki/">фильмов 2021</a>. Мужчинам отлично подойдут детективы и
+                    href="videos_list.php?year=2021">фильмов 2021</a>. Мужчинам отлично подойдут детективы и
                 триллеры. От души повеселиться можно во время сеанса смешной <a
-                    href="https://kinozone.co/komediya/">комедии</a>. Вместе с детьми можно посмотреть кино
+                    href="videos_list.php?genre=комедия">комедии</a>. Вместе с детьми можно посмотреть кино
                 онлайн приключенческого жанра.</p>
             <p>Изюминкой нашего сайта является специальный киношный фильтр, а так же сортировки в категориях,
                 предназначенные для поиска лучших фильмов в нашей огромной библиотеке. Данные модули позволяют
@@ -79,6 +79,23 @@
         </div>
     </div>
 </div>
+<script>
+    function showMore(id) {
+        var dots = document.getElementById("dots_"+id);
+        var moreText = document.getElementById("more_"+id);
+        var btnText = document.getElementById("showMoreBtn_"+id);
+
+        if (dots.style.display === "none") {
+            dots.style.display = "inline";
+            btnText.innerHTML = "читать дальше";
+            moreText.style.display = "none";
+        } else {
+            dots.style.display = "none";
+            btnText.innerHTML = "закрыть текст"
+            moreText.style.display = "inline";
+        }
+    }
+</script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Core plugin JavaScript-->
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
