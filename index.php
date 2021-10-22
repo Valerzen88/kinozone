@@ -40,11 +40,20 @@ include_once("header.php");
                         foreach ($top_20_films as $k => $v) {
                             if ($v[3] !== null) {
                                 echo "<div class=\"col-xl-3 col-sm-6 mb-3\">
-                                            <div class=\"channels-card\">
-                                            <div class=\"channels-card-image\">
-                                            <a href=\"video-page.php?filmId=" . $v[1] . "\"><img class=\"img-fluid\" src=\"" . $v[7] . "\" alt=\"\"></a>
-                                           <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=" . $v[1] . "'\"
-                                           class=\"btn btn-outline-secondary btn-sm\">" . $v[3] . "";
+                                    <div class=\"channels-card\">";
+                                      if(stripos($v[34],"мультфильм")) {
+                                         echo "<div class=\"time\">Мультфильм</div>";
+                                      }elseif($v[30]=="FILM") {
+                                         echo "<div class=\"time\">Фильм</div>";
+                                      }elseif ($v[30]=="TV_SERIES") {
+                                         echo "<div class=\"time\">Сериал</div>";
+                                      }elseif ($v[30]=="MINI_SERIES") {
+                                         echo "<div class=\"time\">Мини-сериал</div>";
+                                      }
+                                    echo "<div class=\"channels-card-image\">
+                                    <a href=\"video-page.php?filmId=" . $v[1] . "\"><img class=\"img-fluid\" src=\"" . $v[7] . "\" alt=\"\"></a>
+                                   <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=" . $v[1] . "'\"
+                                   class=\"btn btn-outline-secondary btn-sm\">" . $v[3] . "";
                                 if ($v[11] > 0 || $v[13] > 0) {
                                     echo "<span style='padding-left: 8px;'><i class=\"fas fa-star\"></i>&nbsp;";
                                     if ($v[11] > 0) {

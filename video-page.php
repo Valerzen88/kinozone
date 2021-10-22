@@ -241,8 +241,6 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                            </div>
                             <google-cast-launcher></google-cast-launcher>
                            <div class="single-video-title box mb-2">
-                               <?php $years="";if($film_info[0][30]=="TV_SERIES" && $film_info[0][35]!==NULL) {$years=$film_info[0][35]." - ".$film_info[0][36];}
-                               else{$years=$film_info[0][22];}?>
                               <h2><i class="fab fa-youtube"></i>&nbsp;<?php echo $film_info[0][3]." (".$years.")"; ?></h2>
 							  <p><?php if(isset($film_info[0][26])){echo $film_info[0][26].".";} ?></p>
                               <p class="mb-0">

@@ -67,7 +67,9 @@ if(!isset($_GET['qp'])){ ?>
 <hr class="mt-0">
 <?php } elseif(isset($_GET['qp'])){
     $conn = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS);
-    $sql = "SELECT * FROM kinozone.tops where top_type=".$_GET['qp'];
+    $sql = "SELECT tops.filmId,tops.nameRu,tops.year,tops.genres,tops.rating,tops.ratingVoteCount,tops.posterUrl,films.type 
+            FROM kinozone.tops inner join kinozone.films on films.kinopoiskId=tops.filmId where tops.top_type=".
+            $_GET['qp']." order by tops.ratingVoteCount desc";
     $result = mysqli_query($conn, $sql);
     $tops=array();
     if ($result) {
@@ -97,26 +99,33 @@ if(!isset($_GET['qp'])){ ?>
         <?php
         if(isset($tops)){
             foreach ($tops as $k => $v) {
-                if ($v[3] !== null) {
-                    echo "<div class=\"col-xl-3 col-sm-6 mb-3\">
-                            <div class=\"channels-card\">";
-                    echo "<div class=\"time\">".$v[4]."</div>";
-                            echo "<div class=\"channels-card-image\">
-                            <a href=\"video-page.php?filmId=" . $v[1] . "\"><img class=\"img-fluid\" src=\"" . $v[11] . "\" alt=\"\"></a>
-                           <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=" . $v[1] . "'\"
-                           class=\"btn btn-outline-secondary btn-sm\">" . $v[2] . "";
-                        echo "<span style='padding-left: 8px;'><i class=\"fas fa-star\"></i>&nbsp;".$v[8];
-                        echo "</span>";
-                    echo "</a></button></div>
-                           </div>
-                            <div class=\"channels-card-body\">                                  
-                             <div class=\"channels-view\">
-                             " . $v[7] . "
-                            </div>
-                            </div>
-                            </div>
-                        </div>";
+                echo "<div class=\"col-xl-3 col-sm-6 mb-3\">
+                        <div class=\"channels-card\">";
+                if(stripos($v[3],"мультфильм")) {
+                    echo "<div class=\"time\">Мультфильм</div>";
+                }elseif($v[7]=="FILM") {
+                    echo "<div class=\"time\">Фильм</div>";
+                }elseif ($v[7]=="TV_SERIES") {
+                    echo "<div class=\"time\">Сериал</div>";
+                }elseif ($v[7]=="MINI_SERIES") {
+                    echo "<div class=\"time\">Мини-сериал</div>";
                 }
+                echo "<div class=\"time\" style='margin-top:18px;'>".$v[2]."</div>";
+                        echo "<div class=\"channels-card-image\">
+                        <a href=\"video-page.php?filmId=" . $v[0] . "\"><img class=\"img-fluid\" src=\"" . $v[6] . "\" alt=\"\"></a>
+                       <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=" . $v[1] . "'\"
+                       class=\"btn btn-outline-secondary btn-sm\">" . $v[1] . "";
+                    echo "<span style='padding-left: 8px;'><i class=\"fas fa-star\"></i>&nbsp;".$v[4];
+                    echo "</span>";
+                echo "</a></button></div>
+                       </div>
+                        <div class=\"channels-card-body\">                                  
+                         <div class=\"channels-view\">
+                         " . $v[3] . "
+                        </div>
+                        </div>
+                        </div>
+                    </div>";
             }
         }
         ?>
