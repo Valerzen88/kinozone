@@ -33,7 +33,7 @@ include_once("header.php");
         </div>
             <a href="https://icmarkets.com/?camp=26550">
             <img class="img-fluid" style="height:250px;" src="img/icmarkets.png" alt="Топ брокер"></a>
-            <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4701374" target="_blank">
+            <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4700850" target="_blank">
             <img class="img-fluid" style="height:250px;" src="https://profile.alparipartners.org/static/interface/img/banners/BackUp/EN/AINT_Backup_EN_497x313.jpg"></a>
     </div>
 </div>

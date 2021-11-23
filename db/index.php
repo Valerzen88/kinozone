@@ -30,7 +30,7 @@ if(isset($_GET["addNewFilmsJob"])) {
     $lastId = 290;
     $time_pre = microtime(true);
     for($i=0;$i<$_GET["addNewFilmsJob"];$i++) {
-        $sql = "SELECT MAX(kinopoiskId) FROM films where kinopoiskId>1200000";
+        $sql = "SELECT MAX(kinopoiskId) FROM films";// where kinopoiskId>1200000";
         $result = mysqli_query($conn, $sql);
         if ($result) {
             while ($row = mysqli_fetch_row($result)) {
@@ -39,7 +39,11 @@ if(isset($_GET["addNewFilmsJob"])) {
             mysqli_free_result($result);
         }
         $amount_ids = $_GET["step"] ?? 100;
-        if(isset($_GET["startId"])){$lastId=$_GET["startId"];}
+        if(isset($_GET["startId"])){
+            if($i>0){
+                $lastId=$_GET["startId"]+($_GET["step"]*$i);
+            }else{$lastId=$_GET["startId"];}
+        }
         echo "+++starting job for films data with lastId=" . $lastId . ";step=".$amount_ids.";+++<br>";
         $newlastId = addFilms($lastId, $amount_ids, $db, $conn);
         $time_post = microtime(true);

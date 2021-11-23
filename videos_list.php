@@ -1,25 +1,116 @@
-<?php
-include_once("header.php");
-?>
+<?php include_once("header.php"); ?>
                <div class="video-block section-padding">
                   <div class="row">
                      <div class="col-md-12">
                         <div class="main-title">
                            <div class="btn-group float-right right-action">
-                              <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Sort by <i class="fa fa-caret-down" aria-hidden="true"></i>
-                              </a>
-                              <div class="dropdown-menu dropdown-menu-right">
-                                 <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
-                                 <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
-                                 <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
+                              <div class="dropdown-menu-right">
+                                  <?php $urlArr=parse_url($_SERVER['REQUEST_URI']);
+                                  parse_str($urlArr['query'], $request_uri);
+                                  $selected_year="";
+                                  $selected_type="";
+                                  $selected_country="";
+                                  $selected_genre="";
+                                  $selected_rating="";
+                                  if(count($request_uri)>0) {
+                                      foreach($request_uri as $k=>$v) {
+                                          if($v==="Страна"||$v==="Тип картины"||$v==="Год"||$v==="Жанр"||$v=="") {continue;}
+                                          if($k==="year") {$selected_year=$v;continue;}
+                                          if($k==="type") {$selected_type=$v;continue;}
+                                          if($k==="country") {$selected_country=$v;continue;}
+                                          if($k==="genre") {$selected_genre=$v;continue;}
+                                          if($k==="rating") {$selected_rating=$v;continue;}
+                                          if(strlen($v)>0) {
+                                              echo "<input type='hidden' name='" . $k . "'  value='" . $v . "'>";
+                                          }
+                                      }
+                                  }
+                                  $actual_link_s= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
+                                          "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]?";
+                                  foreach ($request_uri as $k=>$v) {
+                                      if($k==="p"){continue;}
+                                      $actual_link_s.=$k."=".$v."&";
+                                  }
+                                  ?>
+                                  <form action="<?php echo $actual_link_s;?>" method="get">
+                                      <div style="display: inline-flex;">
+                                          <select class="custom-select" name="year" id="years" onchange="this.form.submit()">
+                                              <?php
+                                              for($i=0;$i<count($years_arr);$i++) {
+                                                  if($selected_year===$years_arr[$i]) {
+                                                      echo "<option selected value='" . $years_arr[$i] . "'>" . $years_arr[$i] . "</option>";
+                                                  }else{
+                                                      echo "<option value='" . $years_arr[$i] . "'>" . $years_arr[$i] . "</option>";
+                                                  }
+                                              }
+                                              ?>
+                                          </select>&nbsp;&nbsp;
+                                          <select class="custom-select" name="type" id="type" onchange="this.form.submit()">
+                                              <?php
+                                              foreach($types_arr as $k => $v) {
+                                                    if ($selected_type === $k) {
+                                                        echo "<option selected value='" . $k . "'>" . $v . "</option>";
+                                                    } else {
+                                                        echo "<option value='" . $k . "'>" . $v . "</option>";
+                                                    }
+                                                }
+                                              ?>
+                                          </select>
+                                          &nbsp;&nbsp;
+                                          <select class="custom-select" name="rating" id="ratingKinopoiskVoteCount" onchange="this.form.submit()">
+                                              <?php
+                                              if ($selected_rating === "rating_ud") {
+                                                  echo "<option selected value='rating_ud'>Рейтинг &nabla;</option>";
+                                              } else {
+                                                  echo "<option value='rating_ud'>Рейтинг &nabla;</option>";
+                                              }
+                                              if ($selected_rating === "rating_du") {
+                                                  echo "<option selected value='rating_du'>Рейтинг &Delta;</option>";
+                                              } else {
+                                                  echo "<option value='rating_du'>Рейтинг &Delta;</option>";
+                                              }
+                                              ?>
+                                          </select>
+                                          &nbsp;&nbsp;
+                                          <select class="custom-select" name="genre" id="genre" onchange="this.form.submit()">
+                                              <?php
+                                              if ($selected_genre === "Жанр") {
+                                                  echo "<option selected value='Жанр'>Жанр</option>";
+                                              } else {
+                                                  echo "<option value='Жанр'>Жанр</option>";
+                                              }
+                                              foreach($genres as $k => $v) {
+                                                  if ($selected_genre === $v[0]) {
+                                                      echo "<option selected value='" . $v[0] . "'>" . $v[0] . "</option>";
+                                                  } else {
+                                                      echo "<option value='" . $v[0] . "'>" . $v[0] . "</option>";
+                                                  }
+                                              }
+                                              ?>
+                                          </select>
+                                          &nbsp;&nbsp;
+                                          <select class="custom-select" name="country" id="country" onchange="this.form.submit()">
+                                              <?php
+                                              foreach($countries as $k => $v) {
+                                                  if ($selected_country === $v[0]) {
+                                                      echo "<option selected value='" . $v[0] . "'>" . $v[0] . "</option>";
+                                                  } else {
+                                                      echo "<option value='" . $v[0] . "'>" . $v[0] . "</option>";
+                                                  }
+                                              }
+                                              ?>
+                                          </select>
+                                      </div>
+                                  </form>
+                                  <br>
                               </div>
                            </div>
                            <h6>Результаты поиска <?php
 								if(isset($_GET["year"])) {echo " по ".$_GET["year"]." году ";}
 								elseif(isset($_GET["genre"])) {echo " по жанру <b>\"".$_GET["genre"]."\"</b> ";}
-						   ?>
-						   (найдено: <?php echo $total_count;?>)</h6>
+                                echo "(найдено: " . $total_count . ")";
+                                ?>
+                           </h6>
                         </div>
                      </div>
                       <?php
@@ -61,23 +152,20 @@ include_once("header.php");
                           <nav>
                               <ul class="pagination justify-content-center pagination-sm mb-4">                                
 								  <?php
-								  if(isset($number_of_pages)&&$number_of_pages>0){
+								  if(count($films_list)>23&&isset($number_of_pages)&&$number_of_pages>0){
 								    $pageDisplayToLeft = 3;
 									$pageDisplayToRight = 7;
 									$pagesTotal = $number_of_pages;
 									$currentPage = $page;
 
-									$prev_disabled="";if($page==1) {$prev_disabled=" disabled";}
-									$params="";if(isset($_GET["q"])) {$params="q=".$_GET["q"];}
-									elseif(isset($_GET["year"])) {$params="year=".$_GET["year"];}
-									elseif(isset($_GET["genre"])) {$params="genre=".$_GET["genre"];}
-									elseif(isset($_GET["genre_serials"])) {$params="genre_serials=".$_GET["genre_serials"];}?>
+									$prev_disabled="";if($page==1) {$prev_disabled=" disabled";} ?>
 									  <li class="page-item<?php echo $prev_disabled;?>">
-										  <a class="page-link" href="videos_list.php?<?php echo $params;?>&p=<?php echo $page-1; ?>" tabindex="-1"><i class="fas fa-angle-left"></i></a>
+										  <a class="page-link" href="<?php echo $actual_link_s;?>&p=<?php echo $page-1; ?>" tabindex="-1">
+                                              <i class="fas fa-angle-left"></i></a>
 									  </li>
 									<?php
 									if(($currentPage - $pageDisplayToLeft) > 1) {
-										echo '<li class="page-item"><a class="page-link" href="videos_list.php?'.$params.'&p=1">1</a></li>';
+										echo '<li class="page-item"><a class="page-link" href="'.$actual_link_s.'&p=1">1</a></li>';
 										echo '<li class="page-item"><a class="page-link disabled"> ... </a></li>';
 									}
 
@@ -85,17 +173,17 @@ include_once("header.php");
 									while($pageDisplay < $currentPage) {
 										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
 										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
-                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
+                                      href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 										$pageDisplay++;
 									}									
 									echo '<li class="page-item active"><a class="page-link disabled" onclick="return false;" 
-                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
+                                      href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 
 									$pageDisplay = min($pagesTotal, $currentPage + 1);
 									while($pageDisplay < min($currentPage + $pageDisplayToRight, $pagesTotal)) {
 										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
 										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
-                                      href="videos_list.php?'.$params.'&p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
+                                      href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 										$pageDisplay++;
 									}
 
@@ -104,12 +192,12 @@ include_once("header.php");
 									}
 									if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
 										echo '<li class="page-item'.$active.'"><a class="page-link" 
-                                      href="videos_list.php?'.$params.'&p=' . $pagesTotal . '">' . $pagesTotal . '</a></li>';
+                                      href="'.$actual_link_s.'p=' . $pagesTotal . '">' . $pagesTotal . '</a></li>';
 									}
 
 									$next_disabled="";if(intval($page)==intval($number_of_pages)) {$next_disabled=" disabled";}?>
                                   <li class="page-item<?php echo $next_disabled;?>">
-                                      <a class="page-link" href="videos_list.php?<?php echo $params;?>&p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
+                                      <a class="page-link" href="<?php echo $actual_link_s;?>&p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
                                   </li>
 
 								  <?php } ?>

@@ -11,7 +11,7 @@
     <?php }?>
     <meta name="description"
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
-    <meta name="keywords" content="киного, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
+    <meta name="keywords" content="киного, кинокрад, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
     <meta name="author" content="KINOZONE.CO">
     <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(85895426, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
     <?php $years="";if($film_info[0][30]=="TV_SERIES" && $film_info[0][35]!==NULL) {$years=$film_info[0][35]." - ".$film_info[0][36];}

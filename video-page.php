@@ -75,7 +75,7 @@ function time_elapsed_string($datetime, $full = false) {
 $sql = "SELECT * FROM genre where genre_one<>\"\"";
 $result = mysqli_query($conn, $sql);
 if ($result) {
-    if (mysqli_num_rows($result) > 1) {
+    if (mysqli_num_rows($result)>0) {
         while ($row = mysqli_fetch_row($result)) {
             array_push($genres, $row);
         }
@@ -85,7 +85,7 @@ if ($result) {
 $sql = "SELECT * FROM years_count where keyword='all_serials'";
 $result = mysqli_query($conn, $sql);
 if ($result) {
-	if (mysqli_num_rows($result) > 0) {
+	if (mysqli_num_rows($result)>0) {
 		while ($row = mysqli_fetch_row($result)) {
 			$serials_amount[$row[2]]=$row[1];
 		}
@@ -93,7 +93,7 @@ if ($result) {
 	}
 }
 if(isset($_POST['q'])) {
-     $sql = "SELECT kinopoiskId FROM films where nameRu like \"%" . Switcher::toCyrillic($_POST["q"]) . "%\" 
+     $sql = "SELECT kinopoiskId FROM films where year<2022 and nameRu like \"%" . Switcher::toCyrillic($_POST["q"]) . "%\" 
         OR nameOriginal like \"%" . Switcher::fromCyrillic($_POST["q"]) . "%\" 
         OR nameOriginal like \"%" . $_POST["q"] . "%\"
         OR kinopoiskId=\"" . $_POST["q"]
@@ -146,7 +146,7 @@ if(isset($_POST['q'])) {
 $sql = "SELECT nameRu FROM kinozone.staff where FIND_IN_SET('".$film_info[0][1]."',filmId);";
 $result = mysqli_query($conn, $sql);
 if ($result) {
-    if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result)>0) {
         while ($row = mysqli_fetch_row($result)) {
            array_push($staff , $row[0]);
         }
@@ -161,15 +161,15 @@ for($i=0;$i<count($genres_temp);$i++){
 }
 $genres_str=substr($genres_str,0,-4);
 $sql = "SELECT kinopoiskId,nameRu,nameOriginal,ratingKinopoisk,ratingImdb,year,filmLength,genre,country FROM films 
-where kinopoiskId<>".$_GET['filmId']." and nameRu is not null and (nameRu like '%".$film_info[0][3]."%' or ".$genres_str." or nameOriginal like '%".$film_info[0][5]."%') 
-and year<2022 order by ratingKinopoiskVoteCount desc limit 20";
-$ip = getIPAddress();
+where kinopoiskId<>".$_GET['filmId']." and nameRu is not null and (nameRu like \"%".$film_info[0][3]."%\" or ".$genres_str." or nameOriginal like \"%".$film_info[0][5]."%\") 
+and year<2022 order by ratingKinopoiskVoteCount desc limit 25";
+/*$ip = getIPAddress();
 $log = date("d.m.Y H:i:s").":: User with IP-Address=".$ip." request related for filmId='".$_GET['filmId']."'".PHP_EOL.
     date("d.m.Y H:i:s").":: sql=".$sql.";".PHP_EOL;
-file_put_contents('log_'.date("j.n.Y").'.log', $log, FILE_APPEND);
+file_put_contents('log_'.date("j.n.Y").'.log', $log, FILE_APPEND);*/
 $result = mysqli_query($conn, $sql);
 if ($result) {
-    if (mysqli_num_rows($result)>1) {
+    if (mysqli_num_rows($result)>0) {
         while ($row = mysqli_fetch_row($result)) {
            array_push($related, $row);
         }
@@ -211,13 +211,41 @@ try {
         }
     }
 } catch (\GuzzleHttp\Exception\GuzzleException | DatabaseException $e) {}
-$pre_sequels_f=array();
 $sql = "SELECT kinopoiskId,nameRu,ratingKinopoisk,ratingImdb,year,filmLength,genre,country FROM films 
 where nameRu is not null and (kinopoiskId IN (".implode(",",$pre_sequels).")) 
-and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 10";
+and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 15";
+$result = mysqli_query($conn, $sql);
+$pre_sequels_f=array();
+if ($result) {
+    if (mysqli_num_rows($result)>0) {
+        while ($row = mysqli_fetch_row($result)) {
+            array_push($pre_sequels_f, $row);
+        }
+        mysqli_free_result($result);
+    }
+}
+$client_2 = new GuzzleHttp\Client([
+    'base_uri' => 'https://kinopoiskapiunofficial.tech/api/v2.2/films/'.$_GET['filmId'].'/similars',
+    'timeout'  => 1.0,
+    'headers' => ['X-API-KEY' => 'da67006f-9505-4e51-a1ab-eb100c711635']
+]);
+$similars=array();
+try {
+    $response = $client_2->request('GET', '');
+    if ($response->getStatusCode() == 200) {
+        $obj = json_decode($response->getBody());
+        $arr=get_object_vars($obj)['items'];
+        for($i=0;$i<count($arr);$i++) {
+            $similars[$i] = get_object_vars($arr[$i])['filmId'];
+        }
+    }
+} catch (\GuzzleHttp\Exception\GuzzleException | DatabaseException $e) {}
+$sql = "SELECT kinopoiskId,nameRu,ratingKinopoisk,ratingImdb,year,filmLength,genre,country FROM films 
+where nameRu is not null and (kinopoiskId IN (".implode(",",$similars).")) 
+and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 15";
 $result = mysqli_query($conn, $sql);
 if ($result) {
-    if (mysqli_num_rows($result)>1) {
+    if (mysqli_num_rows($result)>0) {
         while ($row = mysqli_fetch_row($result)) {
             array_push($pre_sequels_f, $row);
         }
@@ -239,7 +267,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                                   <script src="js/yo.compressed.js"></script>
 							  <?php }else{echo "<h6>Запрос не смог быть обработан. Попробуйте другой фильм. Мы приносим свои извинения за ошибку!</h6>";}?>
                            </div>
-                            <google-cast-launcher></google-cast-launcher>
+                            <!--<google-cast-launcher></google-cast-launcher>-->
                            <div class="single-video-title box mb-2">
                               <h2><i class="fab fa-youtube"></i>&nbsp;<?php echo $film_info[0][3]." (".$years.")"; ?></h2>
 							  <p><?php if(isset($film_info[0][26])){echo $film_info[0][26].".";} ?></p>
@@ -278,7 +306,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                            </div>
                             <div class="adblock mt-3">
                                 <div class="img">
-                                    <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4701374" target="_blank">
+                                    <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4700850" target="_blank">
                                         <img width="100%" alt="alpari forex broker"
                                              src="https://profile.alparipartners.org/static/interface/img/banners/WelcomeTo/EN/700x67.png"></a>
                                 </div>
@@ -352,7 +380,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                               <div class="col-md-12">
                                  <div class="adblock">
                                     <div class="img">
-                                        <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4701374" target="_blank">
+                                        <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4700850" target="_blank">
                                             <img alt="alpari forex broker" width="100%"
                                                  src="https://profile.alparipartners.org/static/interface/img/banners/BackUp/EN/AINT_Backup_EN_300x90.jpg"></a>
                                     </div>
@@ -374,14 +402,14 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                               <div class="col-md-12">
 							  <?php
                                for($c=0;$c<count($pre_sequels_f);$c++){
-                                   $client_3 = new GuzzleHttp\Client([
+                                   $client_4 = new GuzzleHttp\Client([
                                        'base_uri' => 'https://kinopoiskapiunofficial.tech/api/v2.1/films/'.$pre_sequels_f[$c][0].'/frames',
                                        'timeout'  => 1.0,
                                        'headers' => ['X-API-KEY' => 'da67006f-9505-4e51-a1ab-eb100c711635']
                                    ]);
                                    $pics=array();
                                    try {
-                                       $response = $client_3->request('GET', '');
+                                       $response = $client_4->request('GET', '');
                                        if ($response->getStatusCode() == 200) {
                                            $j=0;
                                            $obj = json_decode($response->getBody());
@@ -401,7 +429,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                                                <img class="img-fluid" style="margin:auto;padding-top:4px;text-align:center;display:block;
                                                <?php if(!(isset($pics[0])&count($pics)>0)){echo 'width:64px;height:64px;';} ?>"
                                                     src="<?php if(isset($pics[0])&count($pics)>0){echo $pics[0];}else{echo "img/film.png";} ?>" title="Смотреть фильм" alt="Смотреть фильм"></a>
-                                           <div class="time"><?php echo convertToHoursMins($pre_sequels_f[$c][5]);?></div>
+                                           <div class="time" style="top:unset;bottom: 5px;"><?php echo convertToHoursMins($pre_sequels_f[$c][5]);?></div>
                                        </div>
                                        <div class="video-card-body">
                                            <div class="video-title">
@@ -424,14 +452,14 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                               <?php }
 							  for($i=1;$i<count($related);$i++){
 								  if($related[$i][1]!==null){
-                                      $client_4 = new GuzzleHttp\Client([
+                                      $client_5 = new GuzzleHttp\Client([
                                           'base_uri' => 'https://kinopoiskapiunofficial.tech/api/v2.1/films/'.$related[$i][0].'/frames',
                                           'timeout'  => 1.0,
                                           'headers' => ['X-API-KEY' => 'da67006f-9505-4e51-a1ab-eb100c711635']
                                       ]);
                                       $pics=array();
                                       try {
-                                          $response = $client_4->request('GET', '');
+                                          $response = $client_5->request('GET', '');
                                           if ($response->getStatusCode() == 200) {
                                               $l=0;
                                               $obj = json_decode($response->getBody());
@@ -452,7 +480,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
 									   <?php if(!(isset($pics)&count($pics)>0)){echo 'width:64px;height:64px;';} ?>"
 									   src="<?php if(isset($pics)&count($pics)>0){echo $pics[0];}else{echo "img/film.png";} ?>"
                                             title="Смотреть фильм" alt="Смотреть фильм"></a>
-                                       <div class="time"><?php echo convertToHoursMins($related[$i][6]);?></div>
+                                       <div class="time" style="top:unset;bottom: 5px;"><?php echo convertToHoursMins($related[$i][6]);?></div>
                                     </div>
                                     <div class="video-card-body">                                    
                                        <div class="video-title">
