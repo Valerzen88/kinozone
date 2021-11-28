@@ -133,7 +133,8 @@ if(isset($conn)) {
 if (isset($_POST['q'])) {
     $sql_filters=filters();
     if(strlen($_POST['q'])==0){
-        $sql = "SELECT kinopoiskId FROM films where nameRu is not null and year<2022".$sql_filters." order by year ".gerOrder().",ratingKinopoiskVoteCount".getOrder()." limit 1000";
+        $sql = "SELECT kinopoiskId FROM films where nameRu is not null and year<2022".$sql_filters." order by year ".
+            getOrder().",ratingKinopoiskVoteCount".getOrder()." limit 1000";
     } else {
         $numeric_search="";
         if(is_numeric($_POST['q'])) {
@@ -232,7 +233,8 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['year'])) {
-    $sql="SELECT film_amount FROM years_count where year=".$_GET['year'];
+    $sql="SELECT count(kinopoiskId) FROM films where filmLength is not null and ratingAwait is null and nameRu IS NOT NULL".
+        filters()." order by year".getOrder().", ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -257,7 +259,8 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['genre'])) {
-    $sql="SELECT films_amount FROM genre where genre_one='".$_GET["genre"]."'";
+    $sql="SELECT count(kinopoiskId) FROM genre where nameRu is not null and year<2022".filters()." and filmLength is 
+    not null and ratingAwait is null order by year".getOrder().", ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -282,7 +285,9 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['genre_serials'])) {
-    $sql="SELECT films_amount FROM genre_serials where genre_one='".$_GET["genre_serials"]."'";
+    $sql="SELECT count(kinopoiskId) FROM genre_serials where type=\"TV_SERIES\" and nameRu is not null and year<2022".filters()." and genre like \"%".
+        $_GET["genre_serials"]."%\" and filmLength is not null and ratingAwait is null order by year".getOrder().", 
+        ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
     if($result) {
         while ($row = mysqli_fetch_row($result)) {
@@ -327,7 +332,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
     <?php }?>
     <meta name="description"
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
-    <meta name="keywords" content="киного, кинокрад, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
+    <meta name="keywords" content="киного, кинозон, кинокрад, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
     <meta name="author" content="KINOZONE.CO">
     <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(85895426, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
     <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>

@@ -12,16 +12,17 @@
                                   $selected_country="";
                                   $selected_genre="";
                                   $selected_rating="";
+                                  $hidden_input="";
                                   if(count($request_uri)>0) {
                                       foreach($request_uri as $k=>$v) {
-                                          if($v==="Страна"||$v==="Тип картины"||$v==="Год"||$v==="Жанр"||$v=="") {continue;}
+                                          if($v==="Страна"||$v==="Тип картины"||$v==="Год"||$v==="Жанр") {continue;}
                                           if($k==="year") {$selected_year=$v;continue;}
                                           if($k==="type") {$selected_type=$v;continue;}
                                           if($k==="country") {$selected_country=$v;continue;}
                                           if($k==="genre") {$selected_genre=$v;continue;}
                                           if($k==="rating") {$selected_rating=$v;continue;}
-                                          if(strlen($v)>0) {
-                                              echo "<input type='hidden' name='" . $k . "'  value='" . $v . "'>";
+                                          if((strlen($v)>0||$k==="q")&&$k!=="p") {
+                                              $hidden_input.="<input type='hidden' name='" . $k . "'  value='" . $v . "'>";
                                           }
                                       }
                                   }
@@ -29,10 +30,15 @@
                                           "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]?";
                                   foreach ($request_uri as $k=>$v) {
                                       if($k==="p"){continue;}
-                                      $actual_link_s.=$k."=".$v."&";
+                                      if(count($request_uri)>0){
+                                          $actual_link_s.=$k."=".$v."&";
+                                      }else{
+                                          $actual_link_s.=$k."=".$v;
+                                      }
                                   }
                                   ?>
                                   <form action="<?php echo $actual_link_s;?>" method="get">
+                                      <?php echo $hidden_input; ?>
                                       <div style="display: inline-flex;">
                                           <select class="custom-select" name="year" id="years" onchange="this.form.submit()">
                                               <?php
@@ -106,8 +112,8 @@
                               </div>
                            </div>
                            <h6>Результаты поиска <?php
-								if(isset($_GET["year"])) {echo " по ".$_GET["year"]." году ";}
-								elseif(isset($_GET["genre"])) {echo " по жанру <b>\"".$_GET["genre"]."\"</b> ";}
+								if(isset($_GET["year"])&&$_GET['year']!=="Год") {echo " по ".$_GET["year"]." году ";}
+								elseif(isset($_GET["genre"])&&$_GET['genre']!=="Жанр") {echo " по жанру <b>\"".$_GET["genre"]."\"</b> ";}
                                 echo "(найдено: " . $total_count . ")";
                                 ?>
                            </h6>
@@ -152,7 +158,7 @@
                           <nav>
                               <ul class="pagination justify-content-center pagination-sm mb-4">                                
 								  <?php
-								  if(count($films_list)>23&&isset($number_of_pages)&&$number_of_pages>0){
+								  if(isset($number_of_pages)&&$number_of_pages>0){
 								    $pageDisplayToLeft = 3;
 									$pageDisplayToRight = 7;
 									$pagesTotal = $number_of_pages;
@@ -160,12 +166,12 @@
 
 									$prev_disabled="";if($page==1) {$prev_disabled=" disabled";} ?>
 									  <li class="page-item<?php echo $prev_disabled;?>">
-										  <a class="page-link" href="<?php echo $actual_link_s;?>&p=<?php echo $page-1; ?>" tabindex="-1">
+										  <a class="page-link" href="<?php echo $actual_link_s;?>p=<?php echo $page-1; ?>" tabindex="-1">
                                               <i class="fas fa-angle-left"></i></a>
 									  </li>
 									<?php
 									if(($currentPage - $pageDisplayToLeft) > 1) {
-										echo '<li class="page-item"><a class="page-link" href="'.$actual_link_s.'&p=1">1</a></li>';
+										echo '<li class="page-item"><a class="page-link" href="'.$actual_link_s.'p=1">1</a></li>';
 										echo '<li class="page-item"><a class="page-link disabled"> ... </a></li>';
 									}
 
@@ -180,7 +186,7 @@
                                       href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 
 									$pageDisplay = min($pagesTotal, $currentPage + 1);
-									while($pageDisplay < min($currentPage + $pageDisplayToRight, $pagesTotal)) {
+									while($pageDisplay < min($currentPage + $pageDisplayToRight + 1, $pagesTotal)) {
 										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
 										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
                                       href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
@@ -197,7 +203,7 @@
 
 									$next_disabled="";if(intval($page)==intval($number_of_pages)) {$next_disabled=" disabled";}?>
                                   <li class="page-item<?php echo $next_disabled;?>">
-                                      <a class="page-link" href="<?php echo $actual_link_s;?>&p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
+                                      <a class="page-link" href="<?php echo $actual_link_s;?>p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
                                   </li>
 
 								  <?php } ?>

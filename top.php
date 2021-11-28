@@ -67,7 +67,7 @@ if(!isset($_GET['qp'])){ ?>
 <hr class="mt-0">
 <?php } elseif(isset($_GET['qp'])){
     $conn = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS);
-    $sql = "SELECT tops.filmId,tops.nameRu,tops.year,tops.genres,tops.rating,tops.ratingVoteCount,tops.posterUrl,films.type 
+    $sql = "SELECT DISTINCT tops.filmId,tops.nameRu,tops.year,tops.genres,tops.rating,tops.ratingVoteCount,tops.posterUrl,films.type 
             FROM kinozone.tops inner join kinozone.films on films.kinopoiskId=tops.filmId where tops.top_type=".
             $_GET['qp']." order by tops.ratingVoteCount desc";
     $result = mysqli_query($conn, $sql);

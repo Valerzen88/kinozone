@@ -161,8 +161,9 @@ for($i=0;$i<count($genres_temp);$i++){
 }
 $genres_str=substr($genres_str,0,-4);
 $sql = "SELECT kinopoiskId,nameRu,nameOriginal,ratingKinopoisk,ratingImdb,year,filmLength,genre,country FROM films 
-where kinopoiskId<>".$_GET['filmId']." and nameRu is not null and (nameRu like \"%".$film_info[0][3]."%\" or ".$genres_str." or nameOriginal like \"%".$film_info[0][5]."%\") 
-and year<2022 order by ratingKinopoiskVoteCount desc limit 25";
+where kinopoiskId<>".$_GET['filmId']." and nameRu is not null and (".$genres_str.") 
+and year<2022 order by year desc, ratingImdbVoteCount desc, ratingKinopoiskVoteCount desc limit 25";
+$tempsql=$sql;
 /*$ip = getIPAddress();
 $log = date("d.m.Y H:i:s").":: User with IP-Address=".$ip." request related for filmId='".$_GET['filmId']."'".PHP_EOL.
     date("d.m.Y H:i:s").":: sql=".$sql.";".PHP_EOL;
@@ -479,7 +480,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
 									   <img class="img-fluid" style="margin:auto;padding-top:4px;text-align:center;display:block;
 									   <?php if(!(isset($pics)&count($pics)>0)){echo 'width:64px;height:64px;';} ?>"
 									   src="<?php if(isset($pics)&count($pics)>0){echo $pics[0];}else{echo "img/film.png";} ?>"
-                                            title="Смотреть фильм" alt="Смотреть фильм"></a>
+                                            title="Смотреть '<?php echo $related[$i][1];?>'" alt="Смотреть '<?php echo $related[$i][1];?>'"></a>
                                        <div class="time" style="top:unset;bottom: 5px;"><?php echo convertToHoursMins($related[$i][6]);?></div>
                                     </div>
                                     <div class="video-card-body">                                    
