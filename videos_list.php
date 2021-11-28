@@ -119,6 +119,62 @@
                            </h6>
                         </div>
                      </div>
+                      <div class="col-md-12">
+                          <nav>
+                              <ul class="pagination justify-content-center pagination-sm mb-4">
+                                  <?php
+                                  if(isset($number_of_pages)&&$number_of_pages>0){
+                                      $pageDisplayToLeft = 3;
+                                      $pageDisplayToRight = 7;
+                                      $pagesTotal = $number_of_pages;
+                                      $currentPage = $page;
+
+                                      $prev_disabled="";if($page==1) {$prev_disabled=" disabled";} ?>
+                                      <li class="page-item<?php echo $prev_disabled;?>">
+                                          <a class="page-link" href="<?php echo $actual_link_s;?>p=<?php echo $page-1; ?>" tabindex="-1">
+                                              <i class="fas fa-angle-left"></i></a>
+                                      </li>
+                                      <?php
+                                      if(($currentPage - $pageDisplayToLeft) > 1) {
+                                          echo '<li class="page-item"><a class="page-link" href="'.$actual_link_s.'p=1">1</a></li>';
+                                          echo '<li class="page-item"><a class="page-link disabled"> ... </a></li>';
+                                      }
+
+                                      $pageDisplay = max(1, $currentPage - $pageDisplayToLeft);
+                                      while($pageDisplay < $currentPage) {
+                                          $active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
+                                          echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
+                                      href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
+                                          $pageDisplay++;
+                                      }
+                                      echo '<li class="page-item active"><a class="page-link disabled" onclick="return false;" 
+                                      href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
+
+                                      $pageDisplay = min($pagesTotal, $currentPage + 1);
+                                      while($pageDisplay < min($currentPage + $pageDisplayToRight, $pagesTotal)) {
+                                          $active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
+                                          echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
+                                      href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
+                                          $pageDisplay++;
+                                      }
+
+                                      if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
+                                          echo '<li class="page-item"><a class="page-link disabled"> ... </a></li>';
+                                      }
+                                      if(($currentPage + $pageDisplayToRight) < $pagesTotal) {
+                                          echo '<li class="page-item'.$active.'"><a class="page-link" 
+                                      href="'.$actual_link_s.'p=' . $pagesTotal . '">' . $pagesTotal . '</a></li>';
+                                      }
+
+                                      $next_disabled="";if(intval($page)==intval($number_of_pages)) {$next_disabled=" disabled";}?>
+                                      <li class="page-item<?php echo $next_disabled;?>">
+                                          <a class="page-link" href="<?php echo $actual_link_s;?>p=<?php echo $page+1; ?>" tabindex="-1"><i class="fas fa-angle-right"></i></a>
+                                      </li>
+
+                                  <?php } ?>
+                              </ul>
+                          </nav>
+                      </div>
                       <?php
                         foreach ($films_list as $k => $v) {
                             if($v[3]!==null) {
@@ -186,7 +242,7 @@
                                       href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';
 
 									$pageDisplay = min($pagesTotal, $currentPage + 1);
-									while($pageDisplay < min($currentPage + $pageDisplayToRight + 1, $pagesTotal)) {
+									while($pageDisplay < min($currentPage + $pageDisplayToRight, $pagesTotal)) {
 										$active="";$link_disabled="";if($page==$pageDisplay) {$active=" active";$link_disabled=" disabled";}
 										echo '<li class="page-item'.$active.'"><a class="page-link'.$link_disabled.'" 
                                       href="'.$actual_link_s.'p=' . $pageDisplay . '">' . $pageDisplay . '</a></li>';

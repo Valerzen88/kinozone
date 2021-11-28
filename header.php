@@ -259,7 +259,7 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['genre'])) {
-    $sql="SELECT count(kinopoiskId) FROM genre where nameRu is not null and year<2022".filters()." and filmLength is 
+    $sql="SELECT count(kinopoiskId) FROM films where nameRu is not null and year<2022".filters()." and filmLength is 
     not null and ratingAwait is null order by year".getOrder().", ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
     if($result) {
@@ -285,7 +285,7 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['genre_serials'])) {
-    $sql="SELECT count(kinopoiskId) FROM genre_serials where type=\"TV_SERIES\" and nameRu is not null and year<2022".filters()." and genre like \"%".
+    $sql="SELECT count(kinopoiskId) FROM films where type=\"TV_SERIES\" and nameRu is not null and year<2022".filters()." and genre like \"%".
         $_GET["genre_serials"]."%\" and filmLength is not null and ratingAwait is null order by year".getOrder().", 
         ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
