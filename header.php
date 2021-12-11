@@ -334,7 +334,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
     <meta name="keywords" content="киного, кинозон, кинокрад, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
     <meta name="author" content="KINOZONE.CO">
-    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(85895426, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
+    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "js/yandex_tag.js", "ym"); ym(85895426, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
     <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>
     <!-- Favicon Icon -->
     <!-- Für Apple-Geräte -->
@@ -350,7 +350,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <!-- Custom styles for this template-->
-    <link href="css/osahan.css" rel="stylesheet">
+    <link href="css/main.min.css" rel="stylesheet">
     <!-- Owl Carousel -->
     <link rel="stylesheet" href="vendor/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="vendor/owl-carousel/owl.theme.css">
@@ -427,17 +427,6 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
 		  } else {
 			setCookie("uuser_id", uuser_id, 30);
 		  }
-		}
-		function sendcount(uuser_id){
-		 $.ajax({
-				 type: "POST",
-				 url: "logging.php",
-				 data: {"uuser_id":uuser_id},
-				 async: true,
-				 success: function(data){ 
-					var obj = JSON.parse(data);
-					console.log(obj.msg);
-			  }})
 		}
     </script>
 </head>
@@ -542,7 +531,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" onclick="sendcount(uuser_id);" href="videos_list.php?year=2021">
+            <a class="nav-link" href="videos_list.php?year=2021">
                 <i class="fas fa-fw fa-film"></i>
                 <span>Фильмы 2021 (<?php echo $films_y_amount[2021]; ?>)</span>
             </a>

@@ -113,7 +113,7 @@ if(!isset($_GET['qp'])){ ?>
                 echo "<div class=\"time\" style='margin-top:18px;'>".$v[2]."</div>";
                         echo "<div class=\"channels-card-image\">
                         <a href=\"video-page.php?filmId=" . $v[0] . "\"><img class=\"img-fluid\" src=\"" . $v[6] . "\" alt=\"\"></a>
-                       <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=" . $v[1] . "'\"
+                       <div class=\"channels-card-image-btn\"><button type=\"button\" onclick=\"window.location.href='video-page.php?filmId=" . $v[0] . "'\"
                        class=\"btn btn-outline-secondary btn-sm\">" . $v[1] . "";
                     echo "<span style='padding-left: 8px;'><i class=\"fas fa-star\"></i>&nbsp;".$v[4];
                     echo "</span>";
