@@ -1,7 +1,6 @@
 <?php
 include_once("header.php");
 ?>
-            <hr>
             <div class="video-block section-padding">
                 <div class="row">
                     <div class="col-md-12">

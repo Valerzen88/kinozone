@@ -13,7 +13,7 @@
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
     <meta name="keywords" content="киного, кинозон, кинокрад, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, 2022, лучшие"/>
     <meta name="author" content="KINOZONE.CO">
-    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(85895426, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
+    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "js/yandex_tag.js", "ym"); ym(85895426, "init", { clickmap:false, trackLinks:true, accurateTrackBounce:true, webvisor:false }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
     <?php $years="";if($film_info[0][30]=="TV_SERIES" && $film_info[0][35]!==NULL) {$years=$film_info[0][35]." - ".$film_info[0][36];}
     else{$years=$film_info[0][22];}?>
     <title>KINOZONE.CO - <?php echo $film_info[0][3]." (".$years.")"; ?> - смотреть онлайн </title>
@@ -228,25 +228,6 @@
                 <i class="fas fa-fw fa-history"></i>
                 <span>История</span>
             </a>
-        </li>
-        <li class="nav-item" style="display: none;">
-            <a class="nav-link dropdown-toggle" href="categories.html" data-toggle="dropdown"
-               role="navigation" aria-expanded="true">
-                <i class="fas fa-fw fa-list-alt"></i>
-                <span>Категории</span>
-            </a>
-            <div class="dropdown-menu">
-                <?php
-                /*foreach ($genres as $k => $v) {
-                    echo "<a class=\"dropdown-item\"
-                           href=\"videos_list.php?genre=" . $v[0]."\">
-                           <img src=\"img/genres/".$v[0].".png\" height=\"16\" width=\"16\" title=\"
-                           " . mb_strtoupper($v[0]) . "\" alt=\"" . mb_strtoupper($v[0]) . "\">
-                           " . mb_strtoupper($v[0]) . "
-                        </a>";
-                }*/
-                ?>
-            </div>
         </li>
     </ul>
     <div id="content-wrapper">

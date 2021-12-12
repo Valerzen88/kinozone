@@ -1,4 +1,5 @@
 <?php
+$starttime = microtime(true);
 include("config.php");
 include("switcher.php");
 include("queries.php");
