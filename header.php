@@ -555,6 +555,12 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="persons.php">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Персоны</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="tv.php">
                 <i class="fas fa-fw fa-tv"></i>
                 <span>Телевидение</span>

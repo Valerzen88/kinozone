@@ -144,12 +144,12 @@ if(isset($_POST['q'])) {
 }else{
     header("Location: " . str_replace("video-page.php","",$_SERVER["REQUEST_URI"]));
 }
-$sql = "SELECT nameRu FROM kinozone.staff where FIND_IN_SET('".$film_info[0][1]."',filmId);";
+$sql = "SELECT nameRu,personId FROM kinozone.staff where FIND_IN_SET('".$film_info[0][1]."',filmId) and (profession like '%Актер%' or profession is null)";
 $result = mysqli_query($conn, $sql);
 if ($result) {
     if (mysqli_num_rows($result)>0) {
         while ($row = mysqli_fetch_row($result)) {
-           array_push($staff , $row[0]);
+           array_push($staff , $row);
         }
         mysqli_free_result($result);
     }
@@ -316,8 +316,16 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                            <div class="single-video-info-content box mb-3">
 							  <h6>Описание:</h6>
                               <p><?php echo $film_info[0][25]; ?></p>
-                              <?php if(sizeof($staff)>0){ echo "<h6>В ролях:</h6>
-                              <p>".implode(", ",$staff)."</p>";}?>
+                              <?php if(sizeof($staff)>0){ echo "<h6>В ролях:</h6>";
+                                   foreach($staff as $k => $v){
+                                       if($k<sizeof($staff)-1) {
+                                           echo "<a href='person.php?q=" . $v[1] . "'>" . $v[0] . "</a>, ";
+                                       } else {
+                                           echo "<a href='person.php?q=" . $v[1] . "'>" . $v[0] . "</a>";
+                                       }
+                                   }
+                                   echo "<p></p>";
+                              }?>
 							  <h6>Страна:</h6>
                               <p><?php echo str_ireplace(",",", ",$film_info[0][33]); ?></p>
                               <h6>Жанры:</h6>

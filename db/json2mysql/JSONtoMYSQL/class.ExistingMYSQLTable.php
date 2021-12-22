@@ -379,20 +379,20 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                     $temp_v=array();
                     foreach ($value as $k => $v) {
                         if($tablename!=="staff_roles"){
-                            foreach (array_values($value) as $k => $v){
-                                if(is_string($v)){
-                                    $temp_v[$k] = $v;
+                            foreach (array_values($value) as $k1 => $v1){
+                                if(is_string($v1)){
+                                    $temp_v[$k1] = $v1;
                                 }else {
-                                    $temp_v[$k] = (array_values(get_object_vars($v)))[0];
+                                    $temp_v[$k1] = (array_values(get_object_vars($v1)))[0];
                                 }
                             }
                         }else{
                             $temp=array();
-                            foreach($value as $k => $v){
-                                $v = get_object_vars($v);
-                                $v["personId"] = $personId;
-                                $v=$this->convertToObject($v);
-                                $temp[$k] = $v;
+                            foreach($value as $k2 => $v2){
+                                $v2 = get_object_vars($v2);
+                                $v2["personId"] = $personId;
+                                $v2=$this->convertToObject($v2);
+                                $temp[$k2] = $v2;
                             }
                             $value = $temp;
                             $this->validateTableForCreate($value);
@@ -416,7 +416,9 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                                 $values .= ",";
                             }
                             $colname = $this->getColumnNameForKey($key);
-                            $fields .= "`" . $colname . "`";
+                            if (strlen($colname) > 0) {
+                                $fields .= "`" . $colname . "`";
+                            }
                         }
                         /*if($key==='spouses') {
                             var_dump($fields);
@@ -427,7 +429,7 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                                 $fields .= ",";
                                 $values .= ",";
                             }
-                            if($colname!=='') {
+                            if (strlen($colname) > 0) {
                                 $fields .= "`" . $colname . "`";
                             }
                         }
@@ -444,13 +446,15 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
                 }
 			}else if(is_object($value)){
  				echo "need to handle _object_ subdata for values\n";
-			}else{
-				$colname = $this->getColumnNameForKey($key);
-				if(strlen($fields)){
-					$fields .= ",";
-					$values .= ",";
-				}
-				$fields .= "`" . $colname . "`";
+			}else {
+                $colname = $this->getColumnNameForKey($key);
+                if (strlen($fields)) {
+                    $fields .= ",";
+                    $values .= ",";
+                }
+                if (strlen($colname) > 0) {
+                    $fields .= "`" . $colname . "`";
+                }
 				
 				if(is_bool($value)){
 					$value = (int)$value;
@@ -466,6 +470,9 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
 	    if(strpos($values,"NULL'")){
             $values = str_ireplace("NULL'","NULL,'",$values);
         }
+        if(strpos($values,"''")){
+            $values = str_ireplace("''","NULL",$values);
+        }
         if(strpos($fields,"''")){
             $fields = str_ireplace("''","','",$values);
         }
@@ -473,6 +480,8 @@ class ExistingMYSQLTable extends AbstractMysqlTable{
             echo $fields;
             echo $values;
         }
+        $values = strtr($values, array(',,' => '', ',,,' => '', ',,,,' => '', ',,,,' => ''));
+        $fields = strtr($fields, array(',,' => '', ',,,' => '', ',,,,' => '', ',,,,' => ''));
 		if(strlen($fields)){
 			$sql = "INSERT INTO `" . addslashes($this->tablename) . "` "
 				 . "(" . $fields . ") VALUES (" . $values . ")";
