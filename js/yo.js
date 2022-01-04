@@ -44,9 +44,7 @@ function yo_ahoy_key(event) {
 function yo(self) {
     var h, a, w, i, l, y, s, t = false, p = '';
 
-    var date1 = new Date();
-    var date2 = new Date('2021-10-21');
-    var tld = date1 > date2 ? 'cc' : 'online';
+    var tld = 'cc';
 
     var sel = self && self.getAttribute('data-ahoy')
         ? self.getAttribute('data-ahoy')

@@ -12,7 +12,7 @@ $countries=array();
 $results_per_page = 24;
 $total_count=0;
 $filter_set=false;
-$years_arr=array("Год","2021","2020","2019","2018","2017","2016","2015",
+$years_arr=array("Год","2022","2021","2020","2019","2018","2017","2016","2015",
     "2014","2013","2012","2011","2010","2009","2008","2007","2006","2005","2004","2003","2002","2001","2000","1999",
     "1998","1997","1996","1995","1994","1993","1992","1991","1990","1989","1988","1987","1986","1985","1984","1983",
     "1982","1981","1980","1979","1978","1977","1976","1975","1974","1973","1972","1971","1970","1969","1968","1967",
@@ -428,9 +428,113 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
 			setCookie("uuser_id", uuser_id, 30);
 		  }
 		}
+        $(window).on('load', function(){
+           $('#loading-mask').fadeOut();
+        });
+        $(document).on("click", "a", function () {
+            $('#loading-mask').fadeIn();
+        });
     </script>
+    <style>
+        #loading-mask {
+            background-color: #121212;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        #loading-mask h1 {
+            text-align: center;
+            color: ghostwhite !important;
+            padding-top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #loading-mask .preloader {
+            position: absolute;
+            text-align: center;
+            height: 20px;
+            width: 20px;
+            top: calc(50vh - 10px);
+            left: calc(50vw - 10px);
+        }
+
+        #loading-mask .c-three-dots-loader {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation-fill-mode: both;
+            animation: three-dots-loader-animation 2s infinite ease-in-out;
+            animation-delay: -0.16s;
+            color: ghostwhite; // Dots color
+        }
+
+        #loading-mask .c-three-dots-loader:before, #loading-mask .c-three-dots-loader:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 0;
+            animation: three-dots-loader-animation 2s infinite ease-in-out;
+            border-radius: 50%;
+        }
+
+        #loading-mask .c-three-dots-loader:before {
+            left: -24px;
+            animation-delay: -0.32s;
+        }
+
+        #loading-mask .c-three-dots-loader:after {
+            left: 24px;
+        }
+
+        #loading-mask .load-mask-wrapper {
+            position: absolute;
+            text-align: center;
+            height: 200px;
+            width: 200px;
+            top: calc(50vh - 100px);
+            left: calc(50vw - 100px);
+        }
+
+        #loading-mask .load-mask-innerDots {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 100%;
+            height: 100%;
+        }
+
+        #loading-mask .load-mask-outerPlane {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes three-dots-loader-animation {
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 20px 0 -24px;
+            }
+            40% {
+                box-shadow: 0 20px 0 0;
+            }
+        }
+    </style>
 </head>
 <body id="page-top" onload="checkCookie()">
+<div id="loading-mask">
+    <div class="preloader">
+        <div class="c-three-dots-loader"></div>
+    </div>
+</div>
 <nav class="navbar navbar-expand navbar-light bg-white static-top osahan-nav sticky-top">
     &nbsp;&nbsp;
     <button class="btn btn-link btn-sm text-secondary order-1 order-sm-0" id="sidebarToggle">
