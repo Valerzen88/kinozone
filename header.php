@@ -542,7 +542,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
         }?>
             <a class="nav-link" href="top.php">
                 <i class="fas fa-star"></i>
-                <span>Топ фильмы</span>
+                <span>Подборки</span>
             </a>
         </li>
         <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?year=2021")){
