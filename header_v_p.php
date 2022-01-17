@@ -68,6 +68,7 @@
                 $('#retro-comments').collapse();
             }
         });
+
         /*window['__onGCastApiAvailable'] = function(isAvailable) {
             if (isAvailable) {
                 initializeCastApi();
@@ -87,12 +88,12 @@
         }
         $(window).on('load', function(){
             if(document.getElementById("yohoho")){
-                $('#loading-mask').fadeOut();
+                //$('#loading-mask').fadeOut();
             }
         });
         $(document).on("click", "a", function () {
             if(!document.getElementById("")) {
-                $('#loading-mask').fadeIn();
+                //$('#loading-mask').fadeIn();
             }
         });
     </script>
@@ -192,12 +193,12 @@
     </style>
 </head>
 <body id="page-top">
-<div id="loading-mask">
+<!--<div id="loading-mask">
     <div class="preloader">
         <h4 style="margin-left: -50px;">Загрузка...</h4>
         <div class="c-three-dots-loader"></div>
     </div>
-</div>
+</div>-->
 <nav class="navbar navbar-expand navbar-light bg-white static-top osahan-nav sticky-top">
     &nbsp;&nbsp;
     <button class="btn btn-link btn-sm text-secondary order-1 order-sm-0" id="sidebarToggle">
@@ -279,7 +280,11 @@
 <div id="wrapper">
     <!-- Sidebar -->
     <ul class="sidebar navbar-nav">
-        <li class="nav-item active">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"/")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="/">
                 <i class="fas fa-fw fa-home"></i>
                 <span>Главная</span>
@@ -291,43 +296,71 @@
                 <span>Новинки</span>
             </a>
         </li>
-        <li class="nav-item">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"top.php")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="top.php">
                 <i class="fas fa-star"></i>
                 <span>Топ фильмы</span>
             </a>
         </li>
-        <li class="nav-item">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos-list.php?year=2021")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="videos_list.php?year=2021">
                 <i class="fas fa-fw fa-film"></i>
                 <span>Фильмы 2021 (<?php echo $films_y_amount[2021]; ?>)</span>
             </a>
         </li>
-        <li class="nav-item">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos-list.php?year=2020")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="videos_list.php?year=2020">
                 <i class="fas fa-fw fa-film"></i>
                 <span>Фильмы 2020 (<?php echo $films_y_amount[2020]; ?>)</span>
             </a>
         </li>
-        <li class="nav-item">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos-list.php?year=2019")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="videos_list.php?year=2019">
                 <i class="fas fa-fw fa-film"></i>
                 <span>Фильмы 2019 (<?php echo $films_y_amount[2019]; ?>)</span>
             </a>
         </li>
-		<li class="nav-item">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"serials.php")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="serials.php">
                 <i class="fas fa-fw fa-tv"></i>
                 <span>Сериалы (<?php echo $serials_amount['all_serials']; ?>)</span>
             </a>
         </li>
-        <li class="nav-item">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"persons.php")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="persons.php">
                 <i class="fas fa-fw fa-user"></i>
                 <span>Персоны</span>
             </a>
         </li>
-        <li class="nav-item">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"tv.php")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
             <a class="nav-link" href="tv.php">
                 <i class="fas fa-fw fa-tv"></i>
                 <span>Телевидение</span>

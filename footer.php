@@ -95,6 +95,19 @@
             moreText.style.display = "inline";
         }
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('message', function(e) {
+            if (!e || !e.data) return;
+            var q = document.querySelector('[data-yo="quality"]');
+            var t = document.querySelector('[data-yo="translate"]');
+            if (e.data.quality && q) {
+                q.innerHTML = e.data.quality;
+            }
+            if (e.data.translate && t) {
+                t.innerHTML = e.data.translate;
+            }
+        });
+    });
 </script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Core plugin JavaScript-->

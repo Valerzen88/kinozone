@@ -264,7 +264,11 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                         <div class="single-video-left">
                            <div class="single-video">
                                <?php if(isset($_GET["filmId"])){ ?>
-                                  <div id="yohoho" data-tv="1" data-kinopoisk="<?php echo $_GET['filmId'];?>"></div>
+                                  <div id="yohoho"
+                                       data-tv="1"
+                                       data-trailer="youtube,collaps"
+                                       data-player="videocdn,iframe,kodik,collaps,hdvb,bazon,ustore,alloha,pleer,videospider,trailer"
+                                       data-kinopoisk="<?php echo $_GET['filmId'];?>"></div>
                                   <script src="js/yo.compressed.js"></script>
 							  <?php }else{echo "<h6>Запрос не смог быть обработан. Попробуйте другой фильм. Мы приносим свои извинения за ошибку!</h6>";}?>
                            </div>
@@ -273,8 +277,9 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                               <h2><i class="fab fa-youtube"></i>&nbsp;<?php echo $film_info[0][3]." (".$years.")"; ?></h2>
 							  <p><?php if(isset($film_info[0][26])){echo $film_info[0][26].".";} ?></p>
                               <p class="mb-0">
+                                  <i class="fas fa-palette"></i>&nbsp;Качество: <span data-yo="quality" style="text-transform: uppercase;">???</span>&nbsp;
                               <?php if($film_info[0][11]>0||$film_info[0][13]>0){ echo "<i class=\"fas fa-star\"></i>";
-                                if($film_info[0][11]>0) {echo " Рейтинг: ".$film_info[0][11];}elseif($film_info[0][13]>0){echo " Рейтинг: ".$film_info[0][13];}}
+                                if($film_info[0][11]>0) {echo "&nbsp;Рейтинг: ".$film_info[0][11];}elseif($film_info[0][13]>0){echo "&nbsp;Рейтинг: ".$film_info[0][13];}}
 							  $age="";
 							  if ($film_info[0][32]=="age0") {
 								  $age="0";
@@ -307,12 +312,12 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                            </div>
                             <div class="adblock mt-3">
                                 <div class="img">
-                                    <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4700850" target="_blank">
-                                        <img width="100%" alt="alpari forex broker"
-                                             src="https://profile.alparipartners.org/static/interface/img/banners/WelcomeTo/EN/700x67.png"></a>
+                                    <a href="https://apyecom.com/click/61e48d722bfa815b5b4de506/170143/275240/kinozone" target="_blank">
+                                        <img width="100%" alt="Альфабанк 100 дней 0%"
+                                             src="img/a_d_s/alfabank_banner_min.png"></a>
                                 </div>
                             </div>
-                           <div class="single-video-info-content box mb-3">
+                           <div class="single-video-info-content box mb-2">
 							  <h6>Описание:</h6>
                               <p><?php echo $film_info[0][25]; ?></p>
                               <?php if(sizeof($staff)>0){ echo "<h6>В ролях:</h6>";
@@ -333,6 +338,11 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                                   echo "<h6>Оригинальное название:</h6><p>".$film_info[0][5]."</p>";
                               } ?>
                            </div>
+                            <div class="adblock mt-3">
+                                <a href="https://apyecom.com/click/61e49a782bfa813a350dc56b/110937/275240/kinozone" target="_blank">
+                                    <img width="100%" alt="Cкидки на детские игрушки на AliExpress!"
+                                         src="img/a_d_s/aliexpress_banner_min.png"></a>
+                            </div>
                             <?php if(count($reviews_main_arr)>0){ ?>
 						   <div class="box mb-3 single-video-comment-tabs">
                                 <ul class="nav nav-tabs" role="tablist">
@@ -389,9 +399,9 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                               <div class="col-md-12">
                                  <div class="adblock">
                                     <div class="img">
-                                        <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4700850" target="_blank">
+                                        <a href="https://apyecom.com/click/61e48d722bfa815b5b4de506/170143/275240/kinozone" target="_blank">
                                             <img alt="alpari forex broker" width="100%"
-                                                 src="https://profile.alparipartners.org/static/interface/img/banners/BackUp/EN/AINT_Backup_EN_300x90.jpg"></a>
+                                                 src="img/a_d_s/alfabank_100_days_rechteck_min.png"></a>
                                     </div>
                                  </div>
                                  <div class="main-title">
