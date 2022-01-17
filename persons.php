@@ -1,7 +1,7 @@
 <?php
 include_once("header.php");
 $persons=array();
-$sql = "SELECT * FROM kinozone.staff where birthday like '%".date("-m-d")."' and nameRu is not null and nameRu<>'' order by nameRu asc";
+$sql = "SELECT * FROM kinozone.staff where birthday like '%".date("-m-d")."' and nameRu is not null and nameRu<>'' order by nameRu asc limit 48";
 //SUBSTRING_INDEX(nameRu,' ',-1) like 'а%' limit 25
 $result = mysqli_query($conn, $sql);
 if ($result) {
@@ -17,8 +17,8 @@ if ($result) {
         <div class="row">
             <div class="col-md-12">
                 <div class="main-title">
-                    <h6>Сегодня день рождения у <?php echo count($persons);?> персон</h6>
-                    <p style="color: red;"><i>Данная функция находиться ещё в стадии разработки!</i></p>
+                    <h6>Сегодня день рождения</h6>
+                    <p style="color: red;"><i>Данная функция находиться ещё в стадии разработки! Показаны только 48 персон!</i></p>
                 </div>
             </div>
             <?php

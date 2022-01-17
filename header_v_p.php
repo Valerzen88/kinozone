@@ -35,7 +35,38 @@
     <!-- Owl Carousel -->
     <link rel="stylesheet" href="vendor/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="vendor/owl-carousel/owl.theme.css">
-    <!--<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>-->
+    <style>
+        .lds-ripple {
+            display: inline-block;
+            position: relative;
+        }
+        .lds-ripple div {
+            position: absolute;
+            border: 4px solid #fff;
+            opacity: 1;
+            border-radius: 50%;
+            animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+        .lds-ripple div:nth-child(2) {
+            animation-delay: -0.5s;
+        }
+        @keyframes lds-ripple {
+            0% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                top: 0px;
+                left: 0px;
+                width: 72px;
+                height: 72px;
+                opacity: 0;
+            }
+        }
+    </style>
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
@@ -68,137 +99,9 @@
                 $('#retro-comments').collapse();
             }
         });
-
-        /*window['__onGCastApiAvailable'] = function(isAvailable) {
-            if (isAvailable) {
-                initializeCastApi();
-            }
-        };
-        initializeCastApi = function() {
-            cast.framework.CastContext.getInstance().setOptions({
-                receiverApplicationId: applicationId,
-                autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-            });
-            cast.framework.CastContext.getInstance().setOptions({
-                receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID
-            });
-        };*/
-        function openWhatsApp() {
-            //window.open('whatsapp://send?text='');
-        }
-        $(window).on('load', function(){
-            if(document.getElementById("yohoho")){
-                //$('#loading-mask').fadeOut();
-            }
-        });
-        $(document).on("click", "a", function () {
-            if(!document.getElementById("")) {
-                //$('#loading-mask').fadeIn();
-            }
-        });
     </script>
-    <style>
-        #loading-mask {
-            background-color: #121212;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: 10000;
-            overflow: hidden;
-        }
-
-        #loading-mask h1 {
-            text-align: center;
-            color: ghostwhite !important;
-            left: -24px;
-            padding-top: 40%;
-            transform: translateY(-50%);
-        }
-
-        #loading-mask .preloader {
-            position: absolute;
-            text-align: center;
-            height: 20px;
-            width: 20px;
-            top: calc(50vh - 10px);
-            left: calc(50vw - 10px);
-        }
-
-        #loading-mask .c-three-dots-loader {
-            position: relative;
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            animation-fill-mode: both;
-            animation: three-dots-loader-animation 2s infinite ease-in-out;
-            animation-delay: -0.16s;
-            color: ghostwhite; // Dots color
-        }
-
-        #loading-mask .c-three-dots-loader:before, #loading-mask .c-three-dots-loader:after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            top: 0;
-            animation: three-dots-loader-animation 2s infinite ease-in-out;
-            border-radius: 50%;
-        }
-
-        #loading-mask .c-three-dots-loader:before {
-            left: -24px;
-            animation-delay: -0.32s;
-        }
-
-        #loading-mask .c-three-dots-loader:after {
-            left: 24px;
-        }
-
-        #loading-mask .load-mask-wrapper {
-            position: absolute;
-            text-align: center;
-            height: 200px;
-            width: 200px;
-            top: calc(50vh - 100px);
-            left: calc(50vw - 100px);
-        }
-
-        #loading-mask .load-mask-innerDots {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            width: 100%;
-            height: 100%;
-        }
-
-        #loading-mask .load-mask-outerPlane {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        @keyframes three-dots-loader-animation {
-            0%,
-            80%,
-            100% {
-                box-shadow: 0 20px 0 -24px;
-            }
-            40% {
-                box-shadow: 0 20px 0 0;
-            }
-        }
-    </style>
 </head>
 <body id="page-top">
-<!--<div id="loading-mask">
-    <div class="preloader">
-        <h4 style="margin-left: -50px;">Загрузка...</h4>
-        <div class="c-three-dots-loader"></div>
-    </div>
-</div>-->
 <nav class="navbar navbar-expand navbar-light bg-white static-top osahan-nav sticky-top">
     &nbsp;&nbsp;
     <button class="btn btn-link btn-sm text-secondary order-1 order-sm-0" id="sidebarToggle">
@@ -366,13 +269,13 @@
                 <span>Телевидение</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" style="display: none;">
             <a class="nav-link" href="upload-video.php">
                 <i class="fas fa-fw fa-cloud-upload-alt"></i>
                 <span>Добавить фильм</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" style="display: none;">
             <a class="nav-link" href="history.php">
                 <i class="fas fa-fw fa-history"></i>
                 <span>История</span>

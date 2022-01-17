@@ -1,7 +1,6 @@
 <?php
 include("config.php");
 include("switcher.php");
-include("queries.php");
 $film_info = array();
 $top_20_films = array();
 $top_20_serials = array();
@@ -128,6 +127,15 @@ if(isset($conn)) {
             }
             mysqli_free_result($result);
         }
+    }
+    $films_y_amount=array();
+    $sql = "SELECT year,film_amount FROM years_count where year>2018";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        while ($row = mysqli_fetch_row($result)) {
+            $films_y_amount[$row[0]]=$row[1];
+        }
+        mysqli_free_result($result);
     }
 }
 if (isset($_POST['q'])) {
@@ -320,7 +328,6 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <?php /*echo $sql;*/?>
     <meta name="my_id" content="541">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -428,113 +435,9 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
 			setCookie("uuser_id", uuser_id, 30);
 		  }
 		}
-        $(window).on('load', function(){
-           //$('#loading-mask').fadeOut();
-        });
-        $(document).on("click", "a", function () {
-            //$('#loading-mask').fadeIn();
-        });
     </script>
-    <style>
-        #loading-mask {
-            background-color: #121212;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            overflow: hidden;
-        }
-
-        #loading-mask h1 {
-            text-align: center;
-            color: ghostwhite !important;
-            padding-top: 50%;
-            transform: translateY(-50%);
-        }
-
-        #loading-mask .preloader {
-            position: absolute;
-            text-align: center;
-            height: 20px;
-            width: 20px;
-            top: calc(50vh - 10px);
-            left: calc(50vw - 10px);
-        }
-
-        #loading-mask .c-three-dots-loader {
-            position: relative;
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            animation-fill-mode: both;
-            animation: three-dots-loader-animation 2s infinite ease-in-out;
-            animation-delay: -0.16s;
-            color: ghostwhite; // Dots color
-        }
-
-        #loading-mask .c-three-dots-loader:before, #loading-mask .c-three-dots-loader:after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            top: 0;
-            animation: three-dots-loader-animation 2s infinite ease-in-out;
-            border-radius: 50%;
-        }
-
-        #loading-mask .c-three-dots-loader:before {
-            left: -24px;
-            animation-delay: -0.32s;
-        }
-
-        #loading-mask .c-three-dots-loader:after {
-            left: 24px;
-        }
-
-        #loading-mask .load-mask-wrapper {
-            position: absolute;
-            text-align: center;
-            height: 200px;
-            width: 200px;
-            top: calc(50vh - 100px);
-            left: calc(50vw - 100px);
-        }
-
-        #loading-mask .load-mask-innerDots {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            width: 100%;
-            height: 100%;
-        }
-
-        #loading-mask .load-mask-outerPlane {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        @keyframes three-dots-loader-animation {
-            0%,
-            80%,
-            100% {
-                box-shadow: 0 20px 0 -24px;
-            }
-            40% {
-                box-shadow: 0 20px 0 0;
-            }
-        }
-    </style>
 </head>
 <body id="page-top" onload="checkCookie()">
-<!--<div id="loading-mask">
-    <div class="preloader">
-        <div class="c-three-dots-loader"></div>
-    </div>
-</div>-->
 <nav class="navbar navbar-expand navbar-light bg-white static-top osahan-nav sticky-top">
     &nbsp;&nbsp;
     <button class="btn btn-link btn-sm text-secondary order-1 order-sm-0" id="sidebarToggle">
@@ -702,13 +605,13 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                 <span>Телевидение</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" style="display: none;">
             <a class="nav-link" href="upload-video.php">
                 <i class="fas fa-fw fa-cloud-upload-alt"></i>
                 <span>Добавить фильм</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" style="display: none;">
             <a class="nav-link" href="history.php">
                 <i class="fas fa-fw fa-history"></i>
                 <span>История</span>
