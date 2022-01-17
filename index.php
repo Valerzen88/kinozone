@@ -39,7 +39,7 @@ try {
 } catch (\GuzzleHttp\Exception\GuzzleException | DatabaseException $e) {}
 
 ?>
-            <div class="top-category mb-4">
+            <div class="top-category">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="main-title">
@@ -63,6 +63,17 @@ try {
                             ?>
                         </div>
                     </div>
+                </div>
+            </div>
+            <hr>
+            <div class="col-md-12 adblock">
+                <div class="main-title">
+                    <h6>Реклама</h6>
+                </div>
+                <div class="img">
+                    <a href="https://apretailer.com.br/click/61e5da6e2bfa81370045ab92/159630/275240/kinozone" target="_blank">
+                        <img alt="1xbet ставки на спорт и киберспорт" width="100%"
+                             src="img/a_d_s/1xbet-bonus-pri-registracii-banner.jpeg"></a>
                 </div>
             </div>
             <hr>

@@ -41,6 +41,51 @@ if(!isset($_GET['qp'])){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="channels-card">
                 <div class="channels-card-image">
+                    <a href="top.php?qp=3"><img class="img-fluid" src="img/marvel.jpeg" alt="Киновселенная Марвел"></a>
+                    <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=3'" class="btn btn-outline-secondary btn-sm">
+                            <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Киновселенная Марвел</span></a></button>
+                    </div>
+                </div>
+                <div class="channels-card-body">
+                    <div class="channels-view">
+                        Все фильмы франшизы Марвел.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="channels-card">
+                <div class="channels-card-image">
+                    <a href="top.php?qp=4"><img class="img-fluid" src="img/harry_potter.jpeg" alt="Киновселенная Гарри Поттера"></a>
+                    <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=4'" class="btn btn-outline-secondary btn-sm">
+                            <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Киновселенная Гарри Поттера</span></a></button>
+                    </div>
+                </div>
+                <div class="channels-card-body">
+                    <div class="channels-view">
+                        Все фильмы франшизы Гарри Поттера.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="channels-card">
+                <div class="channels-card-image">
+                    <a href="top.php?qp=5"><img class="img-fluid" src="img/starwars.jpeg" alt="Киновселенная Звездных Войн"></a>
+                    <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=5'" class="btn btn-outline-secondary btn-sm">
+                            <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Киновселенная Звездных Войн</span></a></button>
+                    </div>
+                </div>
+                <div class="channels-card-body">
+                    <div class="channels-view">
+                        Все фильмы франшизы Звездных Войн.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="channels-card">
+                <div class="channels-card-image">
                     <a href="top.php?qp=2"><img class="img-fluid" src="img/top_awaiting.png" alt="Топ ожидаемых фильмов"></a>
                     <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=2'" class="btn btn-outline-secondary btn-sm">
                             <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Топ ожидаемых фильмов</span></a></button>
@@ -57,19 +102,33 @@ if(!isset($_GET['qp'])){ ?>
             <div class="main-title">
                 <h6>Реклама</h6>
             </div>
-            <a href="https://icmarkets.com/?camp=26550">
-            <img class="img-fluid" style="height:250px;" src="img/icmarkets.png" alt="Топ брокер"></a>
-            <a href="https://www.alpari.org/register/open-account?my=open-account&partner_id=4700850" target="_blank">
-                <img class="img-fluid" style="height:250px;" src="https://profile.alparipartners.org/static/interface/img/banners/BackUp/EN/AINT_Backup_EN_497x313.jpg"></a>
+            <div class="img">
+                <a href="https://apretailer.com.br/click/61e5da6e2bfa81370045ab92/159630/275240/kinozone" target="_blank">
+                    <img alt="1xbet ставки на спорт и киберспорт" width="100%"
+                         src="img/a_d_s/1xbet-bonus-pri-registracii-banner.jpeg"></a>
+            </div>
         </div>
     </div>
 </div>
 <hr class="mt-0">
 <?php } elseif(isset($_GET['qp'])){
-    $conn = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS);
-    $sql = "SELECT DISTINCT tops.filmId,tops.nameRu,tops.year,tops.genres,tops.rating,tops.ratingVoteCount,tops.posterUrl,films.type 
-            FROM kinozone.tops inner join kinozone.films on films.kinopoiskId=tops.filmId where tops.top_type=".
-            $_GET['qp']." order by tops.ratingVoteCount desc";
+    //$conn = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS);
+    if($_GET['qp']==3) {
+        $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
+            kinopoiskId in(1309570,2898,690593,1008445,920265,278217,602409,838,82441,61237,411924,462762,255380,258941,160946,
+                           263531,679830,843649,843650,595938,822709,676266,822708,689066,841263,679830,195496,409600,823956,
+                           623250,843649,843650,843859,1219149,1198811) order by year desc";
+    }else if($_GET['qp']==4){
+            $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
+            kinopoiskId in(689,688,322,8408,48356,89515,276762,407636,797840,843479,4716622) order by year desc";
+    }else if($_GET['qp']==5){
+        $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
+            kinopoiskId in(718222,333,338,447,6695,844,5619,714888,718223,841277,840152,1118138,4290977) order by year desc";
+    } else {
+        $sql = "SELECT DISTINCT tops.filmId,tops.nameRu,tops.year,tops.genres,tops.rating,tops.ratingVoteCount,tops.posterUrl,films.type 
+            FROM kinozone.tops inner join kinozone.films on films.kinopoiskId=tops.filmId where tops.top_type=" .
+            $_GET['qp'] . " order by tops.ratingVoteCount desc";
+    }
     $result = mysqli_query($conn, $sql);
     $tops=array();
     if ($result) {
@@ -92,6 +151,10 @@ if(!isset($_GET['qp'])){ ?>
                     echo "<h6>Список самых популярных фильмов</h6>";
                 }elseif ($_GET['qp']==2) {
                     echo "<h6>Список ожидаемых фильмов</h6>";
+                }elseif ($_GET['qp']==3) {
+                    echo "<h6>Киновселенная Марвел (".count($tops)." фильмов)</h6>";
+                }elseif ($_GET['qp']==4) {
+                    echo "<h6>Киновселенная Гарри Поттера (".count($tops)." фильмов)</h6>";
                 }
                 ?>
             </div>
@@ -121,7 +184,7 @@ if(!isset($_GET['qp'])){ ?>
                        </div>
                         <div class=\"channels-card-body\">                                  
                          <div class=\"channels-view\">
-                         " . $v[3] . "
+                         " . str_ireplace(",",", ",$v[3]) . "
                         </div>
                         </div>
                         </div>
