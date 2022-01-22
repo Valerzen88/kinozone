@@ -86,6 +86,66 @@ if(!isset($_GET['qp'])){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="channels-card">
                 <div class="channels-card-image">
+                    <a href="top.php?qp=6"><img class="img-fluid" src="img/xmen.png" alt="Киновселенная Людей Икс"></a>
+                    <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=6'" class="btn btn-outline-secondary btn-sm">
+                            <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Киновселенная Людей Икс</span></a></button>
+                    </div>
+                </div>
+                <div class="channels-card-body">
+                    <div class="channels-view">
+                        Все фильмы франшизы Людей Икс.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="channels-card">
+                <div class="channels-card-image">
+                    <a href="top.php?qp=7"><img class="img-fluid" src="img/transformers.png" alt="Киновселенная Трансформеров"></a>
+                    <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=7'" class="btn btn-outline-secondary btn-sm">
+                            <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Киновселенная Трансформеров</span></a></button>
+                    </div>
+                </div>
+                <div class="channels-card-body">
+                    <div class="channels-view">
+                        Все фильмы франшизы Трансформеров.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="channels-card">
+                <div class="channels-card-image">
+                    <a href="top.php?qp=8"><img class="img-fluid" src="img/lord_of_the_rings.png" alt="Мир Средиземья"></a>
+                    <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=8'" class="btn btn-outline-secondary btn-sm">
+                            <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Мир Средиземья</span></a></button>
+                    </div>
+                </div>
+                <div class="channels-card-body">
+                    <div class="channels-view">
+                        Все фильмы франшизы Властелина Колец.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="channels-card">
+                <div class="channels-card-image">
+                    <a href="top.php?qp=9"><img class="img-fluid" src="img/ice_age.png" alt="Ледниковый период"></a>
+                    <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=9'" class="btn btn-outline-secondary btn-sm">
+                            <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Ледниковый период</span></a></button>
+                    </div>
+                </div>
+                <div class="channels-card-body">
+                    <div class="channels-view">
+                        Все фильмы франшизы Ледникового периода.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="channels-card">
+                <div class="channels-card-image">
                     <a href="top.php?qp=2"><img class="img-fluid" src="img/top_awaiting.png" alt="Топ ожидаемых фильмов"></a>
                     <div class="channels-card-image-btn"><button type="button" onclick="window.location.href='top.php?qp=2'" class="btn btn-outline-secondary btn-sm">
                             <span style='padding-left: 8px;'><i class="fas fa-video"></i>&nbsp; Топ ожидаемых фильмов</span></a></button>
@@ -124,6 +184,18 @@ if(!isset($_GET['qp'])){ ?>
     }else if($_GET['qp']==5){
         $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
             kinopoiskId in(718222,333,338,447,6695,844,5619,714888,718223,841277,840152,1118138,4290977) order by year desc";
+    }else if($_GET['qp']==6){
+        $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
+            kinopoiskId in(298,886,61361,104904,462358,462754,597687,814016,807682,1012431,910085) order by year desc";
+    }else if($_GET['qp']==7){
+        $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
+            kinopoiskId in(81288,373391,452899,651857,811609,952241) order by year desc";
+    }else if($_GET['qp']==8){
+        $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
+            kinopoiskId in(278522,408876,694633,328,312,3498) order by year desc";
+    }else if($_GET['qp']==9){
+        $sql = "SELECT kinopoiskId,nameRu,year,genre,ratingKinopoisk,ratingKinopoiskVoteCount,posterUrl,type FROM films WHERE 
+            kinopoiskId in(707,86204,392930,647578,522180,965633,818145) order by year desc";
     } else {
         $sql = "SELECT DISTINCT tops.filmId,tops.nameRu,tops.year,tops.genres,tops.rating,tops.ratingVoteCount,tops.posterUrl,films.type 
             FROM kinozone.tops inner join kinozone.films on films.kinopoiskId=tops.filmId where tops.top_type=" .
