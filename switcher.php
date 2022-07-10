@@ -2,7 +2,6 @@
 class Switcher{
         /**
         * 
-        * @var Массив замен
         * 
         */
         private static $switch = array(

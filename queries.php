@@ -110,7 +110,7 @@ if(isset($conn)) {
         } catch (\GuzzleHttp\Exception\GuzzleException | DatabaseException $e) {}
         $sql = "SELECT kinopoiskId,nameRu,ratingKinopoisk,ratingImdb,year,filmLength,genre,country FROM films 
 where nameRu is not null and (kinopoiskId IN (".implode(",",$pre_sequels).")) 
-and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 15";
+and year<2023 and ratingKinopoisk is not null order by year desc, ratingKinopoiskVoteCount desc";
         $result = mysqli_query($conn, $sql);
         $pre_sequels_f=array();
         if ($result) {
@@ -139,7 +139,7 @@ and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 15";
         } catch (\GuzzleHttp\Exception\GuzzleException | DatabaseException $e) {}
         $sql = "SELECT kinopoiskId,nameRu,ratingKinopoisk,ratingImdb,year,filmLength,genre,country FROM films 
 where nameRu is not null and (kinopoiskId IN (".implode(",",$similars).")) 
-and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 15";
+and year<2023 and ratingKinopoisk is not null order by year desc, ratingKinopoiskVoteCount desc";
         $result = mysqli_query($conn, $sql);
         if ($result) {
             if (mysqli_num_rows($result)>0) {
@@ -211,7 +211,7 @@ and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 15";
        //where kinopoiskId<>".$_GET['filmId']." and nameRu is not null
        //and (".$genres_str.")
        //and year<2022 order by year desc, ratingImdbVoteCount desc, ratingKinopoiskVoteCount desc limit 25
-       $sql = "SELECT * FROM related where kinopoiskId<>".$_GET['filmId'];
+       $sql = "SELECT * FROM related where kinopoiskId<>".$_GET['filmId']." and (".$genres_str.") order by year desc limit 48";
        $result = mysqli_query($conn, $sql);
        if ($result) {
            if (mysqli_num_rows($result)>0) {
@@ -228,16 +228,14 @@ and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 15";
                    'timeout'  => 2.0,
                    'headers' => ['X-API-KEY' => 'da67006f-9505-4e51-a1ab-eb100c711635']
                ]);
-               $pics=array();
                try {
                    $response = $client_5->request('GET', '');
                    if ($response->getStatusCode() == 200) {
-                       $l=0;
                        $obj = json_decode($response->getBody());
                        foreach($obj as $k=>$v) {
                            if(isset($v)&&isset($v[0])) {
-                               $pics[$l] = get_object_vars($v[0])['preview'];
-                               $l++;
+                               $pics=array();
+                               $pics[0] = get_object_vars($v[0])['preview'];
                                ?>
                                <div class="video-card video-card-list">
                                    <div class="video-card-image" style="background-color:black;">

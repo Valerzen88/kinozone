@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 $premiers_this_month=array();
 $client_4 = new GuzzleHttp\Client([
     'base_uri' => 'https://kinopoiskapiunofficial.tech/api/v2.2/films/premieres',
-    'timeout'  => 1.0,
+    'timeout'  => 2.0,
     'headers' => ['X-API-KEY' => 'da67006f-9505-4e51-a1ab-eb100c711635']
 ]);
 $get_str="";
@@ -161,7 +161,7 @@ try {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="main-title">                     
-                            <h6>Топ 48 фильмов 2021 года</h6>
+                            <h6>Топ 48 актуальных фильмов</h6>
                         </div>
                     </div>
                     <?php

@@ -193,10 +193,14 @@
                 <span>Главная</span>
             </a>
         </li>
-        <li class="nav-item" style="display: none">
-            <a class="nav-link" href="recently_added.php">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?q=")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?q=">
                 <i class="fas fa-fw fa-users"></i>
-                <span>Новинки</span>
+                <span>Все фильмы</span>
             </a>
         </li>
         <?php if(strpos($_SERVER['REQUEST_URI'],"top.php")){
@@ -207,6 +211,16 @@
             <a class="nav-link" href="top.php">
                 <i class="fas fa-star"></i>
                 <span>Подборки</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos-list.php?year=2022")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?year=2022">
+                <i class="fas fa-fw fa-film"></i>
+                <span>Фильмы 2022 (<?php echo $films_y_amount[2022]; ?>)</span>
             </a>
         </li>
         <?php if(strpos($_SERVER['REQUEST_URI'],"videos-list.php?year=2021")){
@@ -247,6 +261,46 @@
             <a class="nav-link" href="serials.php">
                 <i class="fas fa-fw fa-tv"></i>
                 <span>Сериалы (<?php echo $serials_amount['all_serials']; ?>)</span>
+            </a>
+        </li>
+         <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2022")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2022">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2022 (<?php echo $serials_amount['serials_2022']; ?>)</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2021")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2021">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2021 (<?php echo $serials_amount['serials_2021']; ?>)</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2020")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2020">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2020 (<?php echo $serials_amount['serials_2020']; ?>)</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2019")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2019">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2019 (<?php echo $serials_amount['serials_2019']; ?>)</span>
             </a>
         </li>
         <?php if(strpos($_SERVER['REQUEST_URI'],"persons.php")){

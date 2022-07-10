@@ -22,6 +22,7 @@ $years_arr=array("Год","2022","2021","2020","2019","2018","2017","2016","2015
     "1902","1901","1900","1899","1898","1897","1896","1895","1894","1893","1892","1891","1890","1889","1888","1887",
     "1885","1883","1881","1878","1874");
 $types_arr=array(""=>"Тип картины","FILM"=>"Фильм","TV_SERIES"=>"Сериал","MINI_SERIES"=>"Мини-сериал");
+if(isset($_GET['serials'])&&$_GET['serials']=='true'){$sql_serials=" type like '%SERIES' AND ";}else{$sql_serials=" ";}
 function getIPAddress() {
     //whether ip is from the share internet
     if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -96,7 +97,7 @@ if(isset($conn)) {
             mysqli_free_result($result);
         }
     }
-	$sql = "SELECT * FROM years_count where keyword='all_serials'";
+	$sql = "SELECT * FROM years_count where keyword is not null";
     $result = mysqli_query($conn, $sql);
     if ($result) {
         if (mysqli_num_rows($result) > 0) {
@@ -117,7 +118,7 @@ if(isset($conn)) {
             mysqli_free_result($result);
         }
     }
-    $sql = "SELECT country FROM kinozone.countries limit 0,150";
+    $sql = "SELECT country FROM kinozone.countries limit 0,100";
     $result = mysqli_query($conn, $sql);
     array_push($countries,array(0=>"Страна"));
     if ($result) {
@@ -141,14 +142,14 @@ if(isset($conn)) {
 if (isset($_POST['q'])) {
     $sql_filters=filters();
     if(strlen($_POST['q'])==0){
-        $sql = "SELECT kinopoiskId FROM films where nameRu is not null and year<2022".$sql_filters." order by year ".
+        $sql = "SELECT kinopoiskId FROM films where".$sql_serials."nameRu is not null and year<2023".$sql_filters." order by year ".
             getOrder().",ratingKinopoiskVoteCount".getOrder()." limit 1000";
     } else {
         $numeric_search="";
         if(is_numeric($_POST['q'])) {
             $numeric_search = " OR kinopoiskId=\"" . $_POST["q"] . "\" OR year like \"%" . $_POST["q"] . "%\" ";
         }
-        $sql = "SELECT kinopoiskId FROM films where year<2022".$sql_filters." and nameRu like \"%" . Switcher::toCyrillic($_POST["q"]) . "%\" 
+        $sql = "SELECT kinopoiskId FROM films where".$sql_serials."year<2023".$sql_filters." and nameRu like \"%" . Switcher::toCyrillic($_POST["q"]) . "%\" 
 	OR nameOriginal like \"%" . Switcher::fromCyrillic($_POST["q"]) . "%\"".$numeric_search."order by kinopoiskId".getOrder()." limit 10";
     }
     /*$ip = getIPAddress();
@@ -195,13 +196,13 @@ if (isset($_POST['q'])) {
 if(isset($_GET['q'])) {
     $sql_filters=filters();
     if(strlen($_GET['q'])==0){
-        $sql = "SELECT count(kinopoiskId) FROM films where nameRu is not null and year<2022".$sql_filters." order by year".getOrder().",ratingKinopoiskVoteCount".getOrder();
+        $sql = "SELECT count(kinopoiskId) FROM films where".$sql_serials."nameRu is not null and year<2023".$sql_filters." order by year".getOrder().",ratingKinopoiskVoteCount".getOrder();
     } else {
         $numeric_search="";
         if(is_numeric($_GET['q'])) {
             $numeric_search = " OR kinopoiskId=\"" . $_GET["q"] . "\" OR year like \"%" . $_GET["q"] . "%\" ";
         }
-        $sql = "SELECT count(kinopoiskId) FROM films where year<2022".$sql_filters." and nameRu like \"%" . Switcher::toCyrillic($_GET["q"]) . "%\" 
+        $sql = "SELECT count(kinopoiskId) FROM films where".$sql_serials."year<2023".$sql_filters." and nameRu like \"%" . Switcher::toCyrillic($_GET["q"]) . "%\" 
 	OR nameOriginal like \"%" . Switcher::fromCyrillic($_GET["q"]) . "%\"".$numeric_search."order by kinopoiskId".getOrder();
     }
     /*$ip = getIPAddress();
@@ -223,13 +224,13 @@ if(isset($_GET['q'])) {
     }  
     $page_first_result = ($page-1) * $results_per_page;
     if(strlen($_GET['q'])==0){
-        $sql = "SELECT * FROM films where nameRu is not null and year<2022".$sql_filters." order by year".getOrder().",ratingKinopoiskVoteCount".getOrder()." limit " . $page_first_result . ',' . $results_per_page;
+        $sql = "SELECT * FROM films where".$sql_serials."nameRu is not null and year<2023".$sql_filters." order by year".getOrder().",ratingKinopoiskVoteCount".getOrder()." limit " . $page_first_result . ',' . $results_per_page;
     } else {
         $numeric_search="";
         if(is_numeric($_GET['q'])) {
             $numeric_search = " OR kinopoiskId=\"" . $_GET["q"] . "\" OR year like \"%" . $_GET["q"] . "%\" ";
         }
-        $sql = "SELECT * FROM films where year<2022".$sql_filters." and nameRu like \"%" . Switcher::toCyrillic($_GET["q"]) . "%\" 
+        $sql = "SELECT * FROM films where".$sql_serials."year<2023".$sql_filters." and nameRu like \"%" . Switcher::toCyrillic($_GET["q"]) . "%\" 
 	OR nameOriginal like \"%" . Switcher::fromCyrillic($_GET["q"]) . "%\"".$numeric_search."order by year".getOrder().",
 	ratingKinopoiskVoteCount".getOrder()." LIMIT " . $page_first_result . ',' . $results_per_page;
     }
@@ -241,7 +242,7 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['year'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where filmLength is not null and ratingAwait is null and nameRu IS NOT NULL".
+    $sql="SELECT count(kinopoiskId) FROM films where".$sql_serials."filmLength is not null and ratingAwait is null and nameRu IS NOT NULL".
         filters()." order by year".getOrder().", ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
     if($result) {
@@ -257,7 +258,7 @@ if(isset($_GET['q'])) {
         $page = $_GET['p'];
     }
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where filmLength is not null and ratingAwait is null and nameRu IS NOT NULL".
+    $sql="SELECT * FROM films where".$sql_serials."filmLength is not null and ratingAwait is null and nameRu IS NOT NULL".
         filters()." order by year".getOrder().", ratingKinopoiskVoteCount".getOrder()." LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
@@ -267,7 +268,7 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['genre'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where nameRu is not null and year<2022".filters()." and filmLength is 
+    $sql="SELECT count(kinopoiskId) FROM films where nameRu is not null and year<2023".filters()." and filmLength is 
     not null and ratingAwait is null order by year".getOrder().", ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
     if($result) {
@@ -283,7 +284,7 @@ if(isset($_GET['q'])) {
         $page = $_GET['p'];
     }
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where nameRu is not null and year<2022".filters()." and filmLength is 
+    $sql="SELECT * FROM films where nameRu is not null and year<2023".filters()." and filmLength is 
     not null and ratingAwait is null order by year".getOrder().", ratingKinopoiskVoteCount".getOrder()." LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
     if($result) {
@@ -293,7 +294,7 @@ if(isset($_GET['q'])) {
         mysqli_free_result($result);
     }
 }else if(isset($_GET['genre_serials'])) {
-    $sql="SELECT count(kinopoiskId) FROM films where type=\"TV_SERIES\" and nameRu is not null and year<2022".filters()." and genre like \"%".
+    $sql="SELECT count(kinopoiskId) FROM films where type like \"%SERIES\" and nameRu is not null and year<2023".filters()." and genre like \"%".
         $_GET["genre_serials"]."%\" and filmLength is not null and ratingAwait is null order by year".getOrder().", 
         ratingKinopoiskVoteCount".getOrder();
     $result=mysqli_query($conn,$sql);
@@ -310,7 +311,7 @@ if(isset($_GET['q'])) {
         $page = $_GET['p'];
     }
     $page_first_result = ($page-1) * $results_per_page;
-    $sql="SELECT * FROM films where type=\"TV_SERIES\" and nameRu is not null and year<2022".filters()." and genre like \"%".
+    $sql="SELECT * FROM films where type like \"%SERIES\" and nameRu is not null and year<2023".filters()." and genre like \"%".
         $_GET["genre_serials"]."%\" and filmLength is not null and ratingAwait is null order by year".getOrder().", 
         ratingKinopoiskVoteCount".getOrder()." LIMIT " . $page_first_result . ',' . $results_per_page;
     $result=mysqli_query($conn,$sql);
@@ -320,6 +321,34 @@ if(isset($_GET['q'])) {
         }
         mysqli_free_result($result);
     }
+}else if(isset($_GET['getNovinki'])) {
+    $sql="SELECT count(kinopoiskId) FROM films where type like \"%SERIES\" and nameRu is not null and year<2023".filters()." and genre like \"%".
+        $_GET["genre_serials"]."%\" and filmLength is not null and ratingAwait is null order by year".getOrder().",
+        ratingKinopoiskVoteCount".getOrder();
+        $result=mysqli_query($conn,$sql);
+        if($result) {
+            while ($row = mysqli_fetch_row($result)) {
+                $total_count=$row[0];
+            }
+            mysqli_free_result($result);
+        }
+        $number_of_pages = ceil ($total_count / $results_per_page);
+        if (!isset ($_GET['p']) ) {
+            $page = 1;
+        } else {
+            $page = $_GET['p'];
+        }
+        $page_first_result = ($page-1) * $results_per_page;
+        $sql="SELECT * FROM films where type like \"%SERIES\" and nameRu is not null and year<2023".filters()." and genre like \"%".
+            $_GET["genre_serials"]."%\" and filmLength is not null and ratingAwait is null order by year".getOrder().",
+        ratingKinopoiskVoteCount".getOrder()." LIMIT " . $page_first_result . ',' . $results_per_page;
+            $result=mysqli_query($conn,$sql);
+            if($result) {
+                while ($row = mysqli_fetch_row($result)) {
+                    array_push($films_list,$row);
+                }
+                mysqli_free_result($result);
+            }
 }
 $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
         "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
@@ -339,7 +368,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
     <?php }?>
     <meta name="description"
           content="Скучно? Начинайте смотреть фильмы онлайн бесплатно в хорошем качестве. Самая большая кинотека и удобная сортировка позволяет выбрать лучшее кино или сериал на любой вкус на любом устройстве"/>
-    <meta name="keywords" content="киного, кинозон, кинокрад, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
+    <meta name="keywords" content="киного, кинозон, kinozone, кинокрад, смотреть, фильмы, сериалы, мультики, мультфильмы, онлайн, бесплатно, новинки, в хорошем качестве, 2021, лучшие"/>
     <meta name="author" content="KINOZONE.CO">
     <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "js/yandex_tag.js", "ym"); ym(85895426, "init", { clickmap:false, trackLinks:true, accurateTrackBounce:true, webvisor:false }); </script> <noscript><div><img src="https://mc.yandex.ru/watch/85895426" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
     <title>KINOZONE.CO - Смотри фильмы и сериалы онлайн на любом устройстве!</title>
@@ -529,10 +558,14 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                 <span>Главная</span>
             </a>
         </li>
-        <li class="nav-item" style="display: none">
-            <a class="nav-link" href="recently_added.php">
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?q=")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?q=">
                 <i class="fas fa-fw fa-users"></i>
-                <span>Новинки</span>
+                <span>Все фильмы</span>
             </a>
         </li>
         <?php if(strpos($_SERVER['REQUEST_URI'],"top.php")){
@@ -543,6 +576,16 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
             <a class="nav-link" href="top.php">
                 <i class="fas fa-star"></i>
                 <span>Подборки</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?year=2022")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?year=2022">
+                <i class="fas fa-fw fa-film"></i>
+                <span>Фильмы 2022 (<?php echo $films_y_amount[2022]; ?>)</span>
             </a>
         </li>
         <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?year=2021")){
@@ -583,6 +626,46 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
             <a class="nav-link" href="serials.php">
                 <i class="fas fa-fw fa-tv"></i>
                 <span>Сериалы (<?php echo $serials_amount['all_serials']; ?>)</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2022")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2022">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2022(<?php echo $serials_amount['serials_2022']; ?>)</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2021")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2021">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2021(<?php echo $serials_amount['serials_2021']; ?>)</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2020")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2020">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2020(<?php echo $serials_amount['serials_2020']; ?>)</span>
+            </a>
+        </li>
+        <?php if(strpos($_SERVER['REQUEST_URI'],"videos_list.php?serials=true&year=2019")){
+            echo "<li class='nav-item active'>";
+        }else{
+            echo "<li class='nav-item'>";
+        }?>
+            <a class="nav-link" href="videos_list.php?serials=true&year=2019">
+                <i class="fas fa-fw fa-tv"></i>
+                <span>Сериалы 2019(<?php echo $serials_amount['serials_2019']; ?>)</span>
             </a>
         </li>
         <?php if(strpos($_SERVER['REQUEST_URI'],"persons.php")){

@@ -32,7 +32,7 @@ if ($result) {
         mysqli_free_result($result);
     }
 }
-$sql = "SELECT * FROM years_count where keyword='all_serials'";
+$sql = "SELECT * FROM years_count where keyword is not null";
 $result = mysqli_query($conn, $sql);
 if ($result) {
 	if (mysqli_num_rows($result)>0) {
@@ -52,7 +52,7 @@ if ($result) {
     mysqli_free_result($result);
 }
 if(isset($_POST['q'])) {
-     $sql = "SELECT kinopoiskId FROM films where year<2022 and nameRu like \"%" . Switcher::toCyrillic($_POST["q"]) . "%\" 
+     $sql = "SELECT kinopoiskId FROM films where year<2023 and nameRu like \"%" . Switcher::toCyrillic($_POST["q"]) . "%\" 
         OR nameOriginal like \"%" . Switcher::fromCyrillic($_POST["q"]) . "%\" 
         OR nameOriginal like \"%" . $_POST["q"] . "%\"
         OR kinopoiskId=\"" . $_POST["q"]
@@ -123,9 +123,13 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                      <div class="col-md-8">
                         <div class="single-video-left">
                            <div class="single-video">
-                               <?php if(isset($_GET["filmId"])){ ?>
+                               <?php if(isset($_GET["filmId"])&&(!($_GET["filmId"]=="4360154"))){ ?>
                                   <div id="yohoho"
                                        data-tv="1"
+									   data-videocdn="GY5a0HaiZS2iDYDYNLZOmB183HgzP2Pf"
+									   data-bazon="3841baf1779f13fa4bdc4141603b111e"
+									   data-youtube="AIzaSyAhXC9vzrhGkMh8yEPtIJcnmyzQdF2C4YM"
+									   data-kodik="9dd447bf3e590964210c8f356a1b83c4"
                                        data-trailer="youtube,collaps"
                                        data-player="videocdn,iframe,kodik,collaps,hdvb,bazon,ustore,alloha,pleer,videospider,trailer"
                                        data-kinopoisk="<?php echo $_GET['filmId'];?>"></div>
@@ -158,8 +162,10 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                               if($film_info[0][23]!=null){
                                   echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clock\"></i>&nbsp;".convertToHoursMins($film_info[0][23])."</span>";
                               }
-                              if($film_info[0][30]=="FILM") {
-                                  echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clipboard-list\"></i>&nbsp;Категория: Фильм</span>";
+                             if(stripos($film_info[0][34], "мультфильм")) {
+                                echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clipboard-list\"></i>&nbsp;Категория: Мультфильм</span>";
+                             }elseif($film_info[0][30]=="VIDEO") {
+                                  echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clipboard-list\"></i>&nbsp;Категория: Видео</span>";
                               }elseif($film_info[0][30]=="FILM") {
                                   echo "<span style=\"padding-left:15px;\"><i class=\"fas fa-clipboard-list\"></i>&nbsp;Категория: Фильм</span>";
                               }elseif ($film_info[0][30]=="TV_SERIES") {

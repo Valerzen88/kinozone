@@ -265,7 +265,7 @@
 								  <?php } ?>
                               </ul>
                           </nav>
-                          <div/>
+                          </div>
                       </div>
                   </div>
                <hr>
