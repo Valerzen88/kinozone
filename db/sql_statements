@@ -51,11 +51,15 @@ create table if not exists numbers as (
   union select 50 as n
 );
 
-drop table if exists genre; create table if not exists genre as select genre_one, count(1) as films_amount from (select nameRu, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
+drop table if exists top_20_serials;create table if not exists top_20_serials as SELECT * FROM films
+where ratingAwait is null and nameRu is not null and serial=1 and year<2024 and ratingKinopoisk is not null order by year desc, ratingKinopoiskVoteCount desc limit 48;
+drop table if exists top_20;create table if not exists top_20 as SELECT * FROM films 
+where nameRu is not null and year<2024 and ratingKinopoisk is not null order by year desc,ratingKinopoiskVoteCount desc limit 48;
+drop table if exists genre_serials; create table if not exists genre_serials as select genre_one, count(1) as films_amount from (select nameRu, type, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
   from films join numbers on char_length(genre)-char_length(replace(genre, ',', ''))>=n-1) gernes_count
-where nameRu is not null 
+where nameRu is not null and type='TV_SERIES'
 group by 1 order by 2 desc;
-select genre_one, count(1) as films_amount from (select nameRu, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
+drop table if exists genre; create table if not exists genre as select genre_one, count(1) as films_amount from (select nameRu, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
   from films join numbers on char_length(genre)-char_length(replace(genre, ',', ''))>=n-1) gernes_count
 where nameRu is not null 
 group by 1 order by 2 desc;
@@ -63,50 +67,90 @@ drop table if exists countries; create table if not exists countries as select c
   from films join numbers on char_length(country)-char_length(replace(country, ',', ''))>=n-1) countries_count
   where nameRu is not null 
 group by 1 order by 2 desc;
-select country, count(1) as films_amount from (select country, nameRu, trim(substring_index(substring_index(country, ',', n), ',', -1)) as country_one
-  from films join numbers on char_length(country)-char_length(replace(country, ',', ''))>=n-1) countries_count
-  where nameRu is not null 
-group by 1 order by 2 desc;
+TRUNCATE `years_count`;
+INSERT INTO years_count (year, film_amount,keyword) 
+VALUES 
+(0001,(SELECT count(kinopoiskId) FROM films where (type like '%SERIES' or serial=1) and nameRu is not null and ratingKinopoisk is NOT null and productionStatus is null and year<2024),"all_serials"),
+(9999,(SELECT count(kinopoiskId) FROM films where nameRu is not null and ratingKinopoisk is NOT null and productionStatus is null and filmLength is not null and year<2024),"all_films"),
+(0019,(SELECT count(kinopoiskId) from films where serial=1 and year=2019 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),"serials_2019"),
+(0020,(SELECT count(kinopoiskId) from films where serial=1 and year=2020 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),"serials_2020"),
+(0021,(SELECT count(kinopoiskId) from films where serial=1 and year=2021 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),"serials_2021"),
+(0022,(SELECT count(kinopoiskId) from films where serial=1 and year=2022 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),"serials_2022"),
+(0023,(SELECT count(kinopoiskId) FROM films where year=2023 and SERIAL=1 and nameRu is not null),"serials_2023"),
+(2023,(SELECT count(kinopoiskId) FROM films where year=2023 and SERIAL=0 and nameRu is not null),NULL),
+(2022,(SELECT count(kinopoiskId) FROM films where YEAR=2022 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),NULL),
+(2021,(SELECT count(kinopoiskId) FROM films where year=2021 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),NULL),
+(2020,(SELECT count(kinopoiskId) FROM films where year=2020 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),NULL),
+(2019,(SELECT count(kinopoiskId) FROM films where year=2019 and nameRu is not null and productionStatus is null and ratingKinopoisk is not null),NULL);
+TRUNCATE `related`;
+INSERT INTO `related`(`kinopoiskId`, `nameRu`, `nameOriginal`, `ratingKinopoisk`, `ratingImdb`, `year`, `filmLength`, `genre`, `country`) 
+SELECT kinopoiskId,nameRu,nameOriginal,ratingKinopoisk,ratingImdb,year,filmLength,genre,country FROM films where nameRu is not null and year<2024 and ratingKinopoisk is not null order by year desc, ratingImdbVoteCount desc, ratingKinopoiskVoteCount desc limit 2048
 
-drop table if exists years_count; CREATE TABLE if not exists `years_count` (
-  `year` int(11) NOT NULL,
-  `film_amount` int(11) DEFAULT NULL,
-  `keyword` varchar(120) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO years_count (year, film_amount,keyword)
-VALUES
-(0001,(SELECT count(kinopoiskId) from films where type='TV_SERIES' and nameRu is not null),"all_serials"),
-(2021,(SELECT count(kinopoiskId) FROM films where year=2021 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2020,(SELECT count(kinopoiskId) FROM films where year=2020 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2019,(SELECT count(kinopoiskId) FROM films where year=2019 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2018,(SELECT count(kinopoiskId) FROM films where year=2018 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2017,(SELECT count(kinopoiskId) FROM films where year=2017 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2016,(SELECT count(kinopoiskId) FROM films where year=2016 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2015,(SELECT count(kinopoiskId) FROM films where year=2015 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2014,(SELECT count(kinopoiskId) FROM films where year=2014 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2013,(SELECT count(kinopoiskId) FROM films where year=2013 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2012,(SELECT count(kinopoiskId) FROM films where year=2012 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2011,(SELECT count(kinopoiskId) FROM films where year=2011 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2010,(SELECT count(kinopoiskId) FROM films where year=2010 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2009,(SELECT count(kinopoiskId) FROM films where year=2009 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2008,(SELECT count(kinopoiskId) FROM films where year=2008 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2007,(SELECT count(kinopoiskId) FROM films where year=2007 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2006,(SELECT count(kinopoiskId) FROM films where year=2006 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2005,(SELECT count(kinopoiskId) FROM films where year=2005 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2004,(SELECT count(kinopoiskId) FROM films where year=2004 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2003,(SELECT count(kinopoiskId) FROM films where year=2003 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2002,(SELECT count(kinopoiskId) FROM films where year=2002 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2001,(SELECT count(kinopoiskId) FROM films where year=2001 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL),
-(2000,(SELECT count(kinopoiskId) FROM films where year=2000 and filmLength is not null and ratingAwait is null and nameRu IS NOT NULL),NULL);
+CREATE TABLE `films_new` (
+	`id` BIGINT(19) NOT NULL AUTO_INCREMENT,
+	`kinopoiskId` BIGINT(19) NOT NULL,
+	`imdbId` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`nameRu` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`nameEn` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`nameOriginal` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`posterUrl` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`posterUrlPreview` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`reviewsCount` BIGINT(19) NULL DEFAULT NULL,
+	`ratingGoodReview` DOUBLE NULL DEFAULT NULL,
+	`ratingGoodReviewVoteCount` BIGINT(19) NULL DEFAULT NULL,
+	`ratingKinopoisk` DOUBLE NULL DEFAULT NULL,
+	`ratingKinopoiskVoteCount` BIGINT(19) NULL DEFAULT NULL,
+	`ratingImdb` DOUBLE NULL DEFAULT NULL,
+	`ratingImdbVoteCount` BIGINT(19) NULL DEFAULT NULL,
+	`ratingFilmCritics` DOUBLE NULL DEFAULT NULL,
+	`ratingFilmCriticsVoteCount` BIGINT(19) NULL DEFAULT NULL,
+	`ratingAwait` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`ratingAwaitCount` BIGINT(19) NULL DEFAULT NULL,
+	`ratingRfCritics` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`ratingRfCriticsVoteCount` BIGINT(19) NULL DEFAULT NULL,
+	`webUrl` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`year` BIGINT(19) NULL DEFAULT NULL,
+	`filmLength` BIGINT(19) NULL DEFAULT NULL,
+	`slogan` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`shortDescription` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`editorAnnotation` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`isTicketsAvailable` TINYINT(3) NULL DEFAULT NULL,
+	`productionStatus` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`type` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`ratingMpaa` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`ratingAgeLimits` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`country` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`genre` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`startYear` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`endYear` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`serial` TINYINT(3) NULL DEFAULT NULL,
+	`shortFilm` TINYINT(3) NULL DEFAULT NULL,
+	`completed` TINYINT(3) NULL DEFAULT NULL,
+	`hasImax` TINYINT(3) NULL DEFAULT NULL,
+	`has3D` TINYINT(3) NULL DEFAULT NULL,
+	`lastSync` DATE NULL DEFAULT NULL,
+	`coverUrl` TEXT NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	`logoUrl` VARCHAR(120) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `kinopoiskId` (`kinopoiskId`) USING BTREE,
+	INDEX `year` (`year`) USING BTREE,
+	INDEX `serial` (`serial`) USING BTREE,
+	INDEX `ratingImdbVoteCount` (`ratingImdbVoteCount`) USING BTREE,
+	INDEX `productionStatus` (`productionStatus`) USING BTREE,
+	INDEX `ratingKinopoisk` (`ratingKinopoisk`) USING BTREE,
+	INDEX `ratingKinopoiskVoteCount` (`ratingKinopoiskVoteCount`) USING BTREE,
+	FULLTEXT INDEX `films_search` (`nameRu`, `nameOriginal`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=MYISAM;
 
-drop table if exists top_20;create table if not exists top_20 as SELECT * FROM films
-where nameRu is not null and year<2022 order by year desc,ratingKinopoiskVoteCount desc limit 48
 
-drop table if exists top_20_serials;create table if not exists top_20_serials as SELECT * FROM kinozone.films
-where ratingAwait is null and nameRu is not null and type='TV_SERIES' and filmLength is not null
-and (productionStatus<>'FILMING' or productionStatus is null) and year<2022 order by year desc, ratingKinopoiskVoteCount desc limit 0,20;
-
-drop table if exists genre_serials; create table if not exists genre_serials as select genre_one, count(1) as films_amount from (select nameRu, type, trim(substring_index(substring_index(genre, ',', n), ',', -1)) as genre_one
-  from films join numbers on char_length(genre)-char_length(replace(genre, ',', ''))>=n-1) gernes_count
-where nameRu is not null and type='TV_SERIES'
-group by 1 order by 2 desc;
+INSERT INTO films_new (kinopoiskId, imdbId, nameRu, nameEn, nameOriginal, posterUrl, posterUrlPreview, reviewsCount, ratingGoodReview, ratingGoodReviewVoteCount, ratingKinopoisk, 
+ratingKinopoiskVoteCount, ratingImdb, ratingImdbVoteCount, ratingFilmCritics, ratingFilmCriticsVoteCount, ratingAwait, ratingAwaitCount, ratingRfCritics, ratingRfCriticsVoteCount, 
+webUrl, year, filmLength, slogan, description, shortDescription, editorAnnotation, isTicketsAvailable, productionStatus, type, ratingMpaa, ratingAgeLimits, country, genre, 
+startYear, endYear, serial, shortFilm, completed, hasImax, has3D, lastSync) SELECT kinopoiskId, imdbId, nameRu, nameEn, nameOriginal, posterUrl, posterUrlPreview, reviewsCount, 
+ratingGoodReview, ratingGoodReviewVoteCount, ratingKinopoisk, ratingKinopoiskVoteCount, ratingImdb, ratingImdbVoteCount, ratingFilmCritics, ratingFilmCriticsVoteCount, ratingAwait, 
+ratingAwaitCount, ratingRfCritics, ratingRfCriticsVoteCount, webUrl, year, filmLength, slogan, description, shortDescription, editorAnnotation, isTicketsAvailable, productionStatus, 
+type, ratingMpaa, ratingAgeLimits, country, genre, startYear, endYear, serial, shortFilm, completed, hasImax, has3D, lastSync 
+FROM films where kinopoiskId not in(SELECT kinopoiskId from films_new);
